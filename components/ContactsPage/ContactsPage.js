@@ -65,8 +65,7 @@ class ContactsPage extends Component {
 		return (
 			<TouchableOpacity
 				style={styles.cardContainer}
-				onPress={this._showContact.bind(this, contact.item)}
-			>
+				onPress={this._showContact.bind(this, contact.item)}>
 				<ContactCard
 					style={[styles.card]}
 					name={name}
@@ -80,8 +79,6 @@ class ContactsPage extends Component {
 
 	render() {
 		let contacts = this.props.contacts ? this.props.contacts : [];
-		console.log("chae");
-		console.log(contacts);
 		contacts.sort(compareContacts);
 
 		let contact = null;

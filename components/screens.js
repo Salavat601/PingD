@@ -2,7 +2,7 @@ import { Navigation } from 'react-native-navigation';
 
 import ContactsPage from './ContactsPage/ContactsPage';
 import PingList from './PingList/PingList';
-import Calendar from './Calendar/Calendar';
+import Calendar from './Calendar';
 import Onboarding from './Onboarding/Onboarding';
 import OnboardingContactsPage
 	from './OnboardingContactsPage/OnboardingContactsPage';

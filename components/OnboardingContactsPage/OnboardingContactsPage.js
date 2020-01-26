@@ -22,8 +22,7 @@ import Theme from '../Theme';
 const ContinueButton = (props) => (
 	<TouchableOpacity
 		onPress={props.continue}
-		style={buttonStyles.continueButtonWrapper}
-	>
+		style={buttonStyles.continueButtonWrapper}>
 		<View style={buttonStyles.continueButton}>
 			<Image
 				style={buttonStyles.continueButtonImg}

@@ -5,8 +5,9 @@ import {
 	StyleSheet,
 	Text,
 	TouchableOpacity,
-	View,
+	View
 } from 'react-native';
+import { SearchBar } from 'react-native-elements';
 import Contacts from 'react-native-contacts';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -17,7 +18,6 @@ import AppBar from '../generic/AppBar';
 import ContactSeparator from '../generic/ContactSeparator';
 import OnboardingContactCard from '../OnboardingContactsPage/OnboardingContactCard';
 import Theme from '../Theme';
-
 
 const ContinueButton = (props) => (
 	<TouchableOpacity
@@ -67,7 +67,6 @@ const buttonStyles = StyleSheet.create({
 	},
 });
 
-
 function compareContacts(c1, c2) {
 	if (c1.familyName < c2.familyName)
 		return -1;
@@ -95,6 +94,8 @@ class AddContactsPage extends Component {
 		this.state = {
 			savedNumbers: numbers,
 			contacts: [],
+			searchResult: [],
+			search: '',
 		};
 
 		this._getContacts = this._getContacts.bind(this);
@@ -104,8 +105,52 @@ class AddContactsPage extends Component {
 		this._getContacts();
 	}
 
+	searchContacts(search) {
+		console.log(search);
+		const { contacts } = this.state;
+		searchResult = contacts.filter(function (contact) {
+
+			if (!search || search == '') {
+				console.log('Search Key is Empty.');
+				return true;
+			}
+
+			if (contact.givenName && contact.givenName.indexOf(search) != -1) {
+				console.log('Given Name is Matched.');
+				return true;
+			}
+
+			if (contact.familyName && contact.familyName.indexOf(search) != -1) {
+				console.log('Family Name is Matched.');
+				return true;
+			}
+
+			if (contact.phoneNumbers) {
+				for (let i = 0; i < contact.phoneNumbers.length; i++) {
+					if (contact.phoneNumbers[i].number.indexOf(search) != -1) {
+						console.log('Phone Number is Matched.');
+						console.log(contact.phoneNumbers[i].number);
+						return true;
+					}
+				}
+			}
+
+			// console.log("%s,%s,%s", search, contact.givenName, contact.familyName);
+
+			return false;
+		});
+
+		this.setState({
+			search: search,
+			searchResult: searchResult
+		});
+	}
+
+	onSearchKeyChanged = search => {
+		this.searchContacts(search);
+	};
+
 	_getContacts() {
-		console.log("chae");
 		Contacts.getAll((err, contacts) => {
 			if (err)
 				throw err;
@@ -127,6 +172,7 @@ class AddContactsPage extends Component {
 			});
 
 			this.setState({ contacts: contacts.sort(compareContacts) });
+			this.searchContacts(this.state.search);
 		});
 	}
 
@@ -174,13 +220,13 @@ class AddContactsPage extends Component {
 	}
 
 	render() {
-		console.log('chae');
 		let contactList = null;
+		const { search } = this.state;
 		if (this.state.contacts.length > 0)
 			contactList = (
 				<FlatList
 					contentContainerStyle={styles.contactList}
-					data={this._addContactSeparators(this.state.contacts)}
+					data={this._addContactSeparators(this.state.searchResult)}
 					keyExtractor={(item, index) => index.toString()}
 					renderItem={this._renderContactCard}
 				/>
@@ -194,6 +240,12 @@ class AddContactsPage extends Component {
 					</Text>
 					<ContinueButton continue={this._startApp} />
 				</AppBar>
+				<SearchBar
+					inputContainerStyle={{ backgroundColor: 'white' }}
+					containerStyle={{ backgroundColor: 'white' }}
+					placeholder="Type Here..."
+					onChangeText={this.onSearchKeyChanged}
+					value={search} />
 				{contactList}
 			</View>
 		);
