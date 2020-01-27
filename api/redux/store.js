@@ -2,7 +2,8 @@ import { createStore, applyMiddleware } from 'redux';
 
 // Redux-persist
 import { persistStore, persistCombineReducers } from 'redux-persist';
-import AsyncStorage from '@react-native-community/async-storage';
+// import AsyncStorage from '@react-native-community/async-storage';
+import { AsyncStorage } from 'react-native';
 import reducers from './reducers/index';
 
 // Middlewares

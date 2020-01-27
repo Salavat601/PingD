@@ -6,6 +6,8 @@ import {
 	Text,
 	TouchableOpacity,
 	View,
+	Platform,
+	PermissionsAndroid,
 } from 'react-native';
 import Contacts from 'react-native-contacts';
 import { connect } from 'react-redux';
@@ -109,16 +111,37 @@ class OnboardingContactsPage extends Component {
 		this._getContacts();
 	}
 
-	async _getContacts() {
-		Contacts.getAll((err, contacts) => {
-			if (err) {
-				console.log(err);
-				return;
-			}
+	onContactsFetched(err, contacts) {
+		if (err) {
+			console.log(err);
+			return;
+		}
 
-			contacts = contacts.filter(filterContacts);
-			this.setState({ contacts: contacts.sort(sortContacts) });
-		});
+		if (!contacts) {
+			console.log("Contacts is empty.");
+			return;
+		}
+
+		contacts = contacts.filter(filterContacts);
+		this.setState({ contacts: contacts.sort(sortContacts) });
+	}
+
+	async _getContacts() {
+		if (Platform.OS == "ios") {
+			Contacts.getAll((err, contacts) => {
+				this.onContactsFetched(err, contacts);
+			});
+		} else {
+			PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_CONTACTS, {
+				'title': 'Contacts',
+				'message': 'This app would like to view your contacts.',
+				'buttonPositive': 'Please accept bare mortal'
+			}).then(() => {
+				Contacts.getAll((err, contacts) => {
+					this.onContactsFetched(err, contacts);
+				})
+			})
+		}
 	}
 
 	_renderContactCard(contact) {
@@ -146,8 +169,12 @@ class OnboardingContactsPage extends Component {
 		let processed = [];
 		let lastInitial = null;
 
+		if (!contacts) {
+			return processed;
+		}
+
 		for (let i = 0; i < contacts.length; i++) {
-			let initial = contacts[i].familyName[0];
+			let initial = contacts[i].familyName ? contacts[i].familyName[0] : "";
 			if (initial != lastInitial) {
 				processed.push({ isSeparator: true, letter: initial });
 				lastInitial = initial;

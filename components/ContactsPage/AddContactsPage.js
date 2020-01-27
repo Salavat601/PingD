@@ -150,30 +150,53 @@ class AddContactsPage extends Component {
 		this.searchContacts(search);
 	};
 
-	_getContacts() {
-		Contacts.getAll((err, contacts) => {
-			if (err)
-				throw err;
+	onContactsFetched(err, contacts) {
+		if (err) {
+			console.log(err);
+			return;
+		}
 
-			const savedNumbers = this.state.savedNumbers;
+		const savedNumbers = this.state.savedNumbers;
 
-			contacts = contacts.filter(function (c) {
-				// system contact
-				if (c.givenName.startsWith('#'))
-					return false;
-				// filter no-name contacts
-				if (c.givenName === '' && c.familyName === '')
-					return false;
-				// Check if number is already in an imported contact
-				if (savedNumbers.indexOf(c.phoneNumbers[0].number) != -1)
-					return false;
+		if (!contacts) {
+			console.log("Contacts is empty.");
+			return;
+		}
 
-				return true;
-			});
+		contacts = contacts.filter(function (c) {
+			// system contact
+			if (c.givenName.startsWith('#'))
+				return false;
+			// filter no-name contacts
+			if (c.givenName === '' && c.familyName === '')
+				return false;
+			// Check if number is already in an imported contact
+			if (savedNumbers.indexOf(c.phoneNumbers[0].number) != -1)
+				return false;
 
-			this.setState({ contacts: contacts.sort(compareContacts) });
-			this.searchContacts(this.state.search);
+			return true;
 		});
+
+		this.setState({ contacts: contacts.sort(compareContacts) });
+		this.searchContacts(this.state.search);
+	}
+
+	_getContacts() {
+		if (Platform.OS == "ios") {
+			Contacts.getAll((err, contacts) => {
+				this.onContactsFetched(err, contacts);
+			});
+		} else {
+			PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_CONTACTS, {
+				'title': 'Contacts',
+				'message': 'This app would like to view your contacts.',
+				'buttonPositive': 'Please accept bare mortal'
+			}).then(() => {
+				Contacts.getAll((err, contacts) => {
+					this.onContactsFetched(err, contacts);
+				})
+			})
+		}
 	}
 
 	_renderContactCard(contact) {

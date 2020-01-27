@@ -131,6 +131,7 @@ android {
         applicationId "com.pingd"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
+		missingDimensionStrategy "RNN.reactNativeVersion", "reactNative60"
         versionCode 1
         versionName "1.0"
     }
@@ -181,6 +182,12 @@ android {
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "com.facebook.react:react-native:+"  // From node_modules
+	implementation project(':react-native-navigation')
+	implementation project(':@react-native-community_viewpager')
+	implementation project(':react-native-push-notification')
+    implementation ('com.google.android.gms:play-services-gcm:+') {
+        force = true;
+    }
 
     if (enableHermes) {
         def hermesPath = "../../node_modules/hermes-engine/android/";
@@ -199,3 +206,8 @@ task copyDownloadableDepsToLibs(type: Copy) {
 }
 
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
+
+project.ext.vectoricons = [
+    iconFontNames: [ 'MaterialIcons.ttf', 'EvilIcons.ttf' ] // Name of the font files you want to copy
+] 
+apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
