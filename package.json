@@ -8,6 +8,7 @@
     "android": "react-native run-android",
     "build:android": "react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res",
     "start": "react-native start",
+    "clean": "react-native-clean-project",
     "test": "jest",
     "lint": "eslint ."
   },
@@ -24,7 +25,9 @@
     "react-native-contacts": "^5.0.7",
     "react-native-datepicker": "^1.7.2",
     "react-native-elements": "^1.2.7",
+    "react-native-ios-picker": "^1.0.0",
     "react-native-navigation": "^4.5.3",
+    "react-native-picker-select": "^6.3.4",
     "react-native-push-notification": "^3.1.9",
     "react-native-swipeable-row": "^0.8.1",
     "react-native-swiper": "^1.5.14",
@@ -44,6 +47,7 @@
     "eslint": "^6.8.0",
     "jest": "^25.1.0",
     "metro-react-native-babel-preset": "^0.58.0",
+    "react-native-clean-project": "^3.3.0",
     "react-test-renderer": "16.9.0"
   },
   "jest": {
