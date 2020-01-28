@@ -1038,7 +1038,7 @@
     eslint-plugin-react-native "3.8.1"
     prettier "1.17.0"
 
-"@react-native-community/push-notification-ios@^1.0.1", "@react-native-community/push-notification-ios@^1.0.5":
+"@react-native-community/push-notification-ios@^1.0.5":
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/@react-native-community/push-notification-ios/-/push-notification-ios-1.0.5.tgz#3ad68ea6612875db5c3934dfdc865ebe51606ef3"
   integrity sha512-4JO5XjmzD4EoReHVxMOYni03Twwuq39oyAIk2U62oIjkIE23tTBblC2KC2IS/iadRyJTg7MQ0LtBat2zse9WQg==
@@ -5555,13 +5555,6 @@ react-native-clean-project@^3.3.0:
   resolved "https://registry.yarnpkg.com/react-native-clean-project/-/react-native-clean-project-3.3.0.tgz#89974c4a291123e6d1f72c32185a012a649f1fa8"
   integrity sha512-IudFlNsaQd6QcgcbTZcNEXDlrJ9zzRspIUV7yvBX3bfB72Z9et9hIceH9+F+xYSlvwUSB4L/fvkIPosYKa+q9Q==
 
-react-native-collapse-view@1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/react-native-collapse-view/-/react-native-collapse-view-1.0.0.tgz#6f730aceb2ecfeecc6ff8b265ba05c4aee63a2ef"
-  integrity sha1-b3MKzrLs/uzG/4smW6BcSu5jou8=
-  dependencies:
-    prop-types "^15.5.10"
-
 react-native-communications@^2.2.1:
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/react-native-communications/-/react-native-communications-2.2.1.tgz#7883b56b20a002eeb790c113f8616ea8692ca795"
@@ -5593,13 +5586,6 @@ react-native-elements@^1.2.7:
     react-native-ratings "^6.3.0"
     react-native-status-bar-height "^2.2.0"
 
-react-native-ios-picker@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/react-native-ios-picker/-/react-native-ios-picker-1.0.0.tgz#a2cdf43871b4c932dda9758a50d2c2c4dad02c86"
-  integrity sha512-/QDeij2wxGWwPD9EaFqHXdfB7zQsxHpknBqH5Mxmnetj3zQPZ4OzQf2k+WM+9MYXZUyIsMKGb2NBvHP5MIkLOA==
-  dependencies:
-    react-native-collapse-view "1.0.0"
-
 react-native-navigation@^4.5.3:
   version "4.5.3"
   resolved "https://registry.yarnpkg.com/react-native-navigation/-/react-native-navigation-4.5.3.tgz#cf0d54e9877b843c3932c6fca20e5254f2e83d3d"
@@ -5611,19 +5597,17 @@ react-native-navigation@^4.5.3:
     react-lifecycles-compat "2.0.0"
     tslib "1.9.3"
 
+react-native-notifications@^3.1.1:
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/react-native-notifications/-/react-native-notifications-3.1.1.tgz#012db49f56779804c8c167af71ca5ad5fef355b5"
+  integrity sha512-aIrB23GQm0lTPuwJGxYwIaWao6q8YJp9hQxuu+kvfifIHWfJIOvu1b/Rb5rSCzXqFqzc5Ck1l7ngnxbQy6vi0Q==
+
 react-native-picker-select@^6.3.4:
   version "6.3.4"
   resolved "https://registry.yarnpkg.com/react-native-picker-select/-/react-native-picker-select-6.3.4.tgz#7b58d1601cb815f12786024f6a15003fab0d3b2f"
   integrity sha512-lAoKeTpMQFqJYEWUbPzIP5tjVWCG1NnYKAeVQfWEXU3yKmgisvOJ92hY4mo0gnCedUB9Br2rqpQTAzYwqHFHjQ==
   dependencies:
     lodash.isequal "^4.5.0"
-
-react-native-push-notification@^3.1.9:
-  version "3.1.9"
-  resolved "https://registry.yarnpkg.com/react-native-push-notification/-/react-native-push-notification-3.1.9.tgz#760ee06e743fef74fc9fcb672dac40794fdc4c47"
-  integrity sha512-YpEg9AYBjNgJtHRgHKR0xPB7kk3Gj0uSjUxd0feOIvd7wrfR+zeiBM4NZonGmjlAG6thaE37dfAG5qcsONFM7w==
-  dependencies:
-    "@react-native-community/push-notification-ios" "^1.0.1"
 
 react-native-ratings@^6.3.0:
   version "6.5.0"

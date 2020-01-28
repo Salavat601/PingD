@@ -184,6 +184,10 @@ PODS:
   - React-jsinspector (0.61.5)
   - react-native-contacts (5.0.7):
     - React
+  - react-native-notifications (3.1.1):
+    - React
+  - react-native-viewpager (3.3.0):
+    - React
   - React-RCTActionSheet (0.61.5):
     - React-Core/RCTActionSheetHeaders (= 0.61.5)
   - React-RCTAnimation (0.61.5):
@@ -247,6 +251,8 @@ DEPENDENCIES:
   - React-jsiexecutor (from `../node_modules/react-native/ReactCommon/jsiexecutor`)
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - react-native-contacts (from `../node_modules/react-native-contacts`)
+  - react-native-notifications (from `../node_modules/react-native-notifications`)
+  - "react-native-viewpager (from `../node_modules/@react-native-community/viewpager`)"
   - React-RCTActionSheet (from `../node_modules/react-native/Libraries/ActionSheetIOS`)
   - React-RCTAnimation (from `../node_modules/react-native/Libraries/NativeAnimation`)
   - React-RCTBlob (from `../node_modules/react-native/Libraries/Blob`)
@@ -299,6 +305,10 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/jsinspector"
   react-native-contacts:
     :path: "../node_modules/react-native-contacts"
+  react-native-notifications:
+    :path: "../node_modules/react-native-notifications"
+  react-native-viewpager:
+    :path: "../node_modules/@react-native-community/viewpager"
   React-RCTActionSheet:
     :path: "../node_modules/react-native/Libraries/ActionSheetIOS"
   React-RCTAnimation:
@@ -347,6 +357,8 @@ SPEC CHECKSUMS:
   React-jsiexecutor: d5525f9ed5f782fdbacb64b9b01a43a9323d2386
   React-jsinspector: fa0ecc501688c3c4c34f28834a76302233e29dc0
   react-native-contacts: a30bebe23ddeda7c34bf97cfa5f952201efc5329
+  react-native-notifications: acf37b8cbeb5b05f274b25ffe6289119b65961c2
+  react-native-viewpager: a7b438ca32c57b2614ece2a123e7fe116f743131
   React-RCTActionSheet: 600b4d10e3aea0913b5a92256d2719c0cdd26d76
   React-RCTAnimation: 791a87558389c80908ed06cc5dfc5e7920dfa360
   React-RCTBlob: d89293cc0236d9cb0933d85e430b0bbe81ad1d72

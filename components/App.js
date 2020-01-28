@@ -8,7 +8,8 @@ import * as appActions from '../api/redux/actions/appActions/changeRoot';
 import { registerScreens } from './screens';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 import Theme from '../components/Theme';
-
+import PlatformManager from '../helpers/platformManager';
+import NotificationsIOS, { NotificationsAndroid } from 'react-native-notifications';
 
 const storage = configureStore();
 registerScreens(storage.store, Provider);
@@ -22,6 +23,21 @@ export default class App extends Component {
 		storage.store.subscribe(this.onStoreUpdate.bind(this));
 		storage.store.dispatch(appActions.appInitialized());
 	}
+
+	componentDidMount() {
+		if (PlatformManager.isIOS) {
+			NotificationsIOS.requestPermissions();
+		}
+		/* Android */
+		if (PlatformManager.isAndroid) {
+			NotificationsAndroid.setRegistrationTokenUpdateListener(this.onPushRegistered);
+		}
+	}
+
+	onPushRegistered = async deviceToken => {
+		// TODO: Send the token to my server so it could send back push notifications...
+		console.log(deviceToken);
+	};
 
 	onStoreUpdate() {
 		let { root } = storage.store.getState().app;

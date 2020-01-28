@@ -75,7 +75,6 @@ class CalendarDayComponent extends React.Component {
 
 	renderDots() {
 		const events = EventManager.sharedInstance.eventWithDate(this.props.date);
-		console.log("chae", events.length);
 		return events.map((item, index) => {
 			return (
 				<View style={[dotStyles.content, { backgroundColor: item.ref.color }]} />

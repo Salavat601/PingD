@@ -4,12 +4,12 @@ export default class EventTypes {
 	static all = [
 		{
 			title: 'Friend Milestone',
-			icon: require('../../assets/event_calendar.png'),
+			icon: require('../../assets/event_friend_milestone.png'),
 			color: '#b410d6',
 		},
 		{
 			title: 'Social Event',
-			icon: require('../../assets/event_exam.png'),
+			icon: require('../../assets/event_social_event.png'),
 			color: '#3839dc',
 		},
 		{
@@ -19,7 +19,7 @@ export default class EventTypes {
 		},
 		{
 			title: 'Social Reminder',
-			icon: require('../../assets/event_anniversary.png'),
+			icon: require('../../assets/event_social_reminder.png'),
 			color: '#2d4a59',
 		},
 	];

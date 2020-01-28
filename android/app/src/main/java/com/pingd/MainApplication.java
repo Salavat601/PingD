@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
+import com.facebook.react.shell.MainReactPackage;
 import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
@@ -16,9 +17,9 @@ import com.reactnativenavigation.NavigationApplication;
 import com.reactnativenavigation.react.NavigationReactNativeHost;
 import com.reactnativenavigation.react.ReactGateway;
 
-import com.reactnativecommunity.viewpager.RNCViewPagerPackage;
 import com.rt2zz.reactnativecontacts.ReactNativeContacts;
-import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;
+import com.wix.reactnativenotifications.RNNotificationsPackage;
+import com.reactnativecommunity.viewpager.RNCViewPagerPackage;
 
 public class MainApplication extends NavigationApplication {
 
@@ -43,9 +44,10 @@ public class MainApplication extends NavigationApplication {
 		// No need to add RnnPackage and MainReactPackage
 		return Arrays.<ReactPackage>asList(
 				// eg. new VectorIconsPackage()
-				new RNCViewPagerPackage(),
+				new MainReactPackage(),
 				new ReactNativeContacts(),
-				new ReactNativePushNotificationPackage()
+				new RNCViewPagerPackage(),
+				new RNNotificationsPackage(MainApplication.this)
 		);
 	}
 

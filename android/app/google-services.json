@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "234329178247",
+    "firebase_url": "https://pingd-2c9d5.firebaseio.com",
+    "project_id": "pingd-2c9d5",
+    "storage_bucket": "pingd-2c9d5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:234329178247:android:a99fa14803f8fc92e5f822",
+        "android_client_info": {
+          "package_name": "com.pingd"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "234329178247-otce4hi8e60v1sdcvmqn3s4vu8m4b4n7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDIxOtp1g8ITZopSBB2oC5wUMB1tzctwoY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "234329178247-otce4hi8e60v1sdcvmqn3s4vu8m4b4n7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

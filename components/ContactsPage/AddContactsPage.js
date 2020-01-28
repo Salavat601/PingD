@@ -5,7 +5,8 @@ import {
 	StyleSheet,
 	Text,
 	TouchableOpacity,
-	View
+	View,
+	PermissionsAndroid,
 } from 'react-native';
 import { SearchBar } from 'react-native-elements';
 import Contacts from 'react-native-contacts';
@@ -18,8 +19,9 @@ import AppBar from '../generic/AppBar';
 import ContactSeparator from '../generic/ContactSeparator';
 import OnboardingContactCard from '../OnboardingContactsPage/OnboardingContactCard';
 import Theme from '../Theme';
+import PlatformManager from '../../helpers/platformManager';
 
-const ContinueButton = (props) => (
+const ContinueButton = props => (
 	<TouchableOpacity
 		onPress={props.continue}
 		style={buttonStyles.continueButtonWrapper}>
@@ -68,27 +70,22 @@ const buttonStyles = StyleSheet.create({
 });
 
 function compareContacts(c1, c2) {
-	if (c1.familyName < c2.familyName)
-		return -1;
-	else if (c1.familyName > c2.familyName)
-		return 1;
+	if (c1.familyName < c2.familyName) return -1;
+	else if (c1.familyName > c2.familyName) return 1;
 	else {
-		if (c1.givenName < c2.givenName)
-			return -1;
-		else if (c1.givenName > c2.givenName)
-			return 1;
+		if (c1.givenName < c2.givenName) return -1;
+		else if (c1.givenName > c2.givenName) return 1;
 	}
 
 	return 0;
 }
-
 
 class AddContactsPage extends Component {
 	constructor(props) {
 		super(props);
 
 		var numbers = Object.entries(this.props.contacts).map(([key, value]) => {
-			return value.contact.phoneNumber
+			return value.contact.phoneNumber;
 		});
 
 		this.state = {
@@ -106,10 +103,8 @@ class AddContactsPage extends Component {
 	}
 
 	searchContacts(search) {
-		console.log(search);
 		const { contacts } = this.state;
 		searchResult = contacts.filter(function (contact) {
-
 			if (!search || search == '') {
 				console.log('Search Key is Empty.');
 				return true;
@@ -128,8 +123,6 @@ class AddContactsPage extends Component {
 			if (contact.phoneNumbers) {
 				for (let i = 0; i < contact.phoneNumbers.length; i++) {
 					if (contact.phoneNumbers[i].number.indexOf(search) != -1) {
-						console.log('Phone Number is Matched.');
-						console.log(contact.phoneNumbers[i].number);
 						return true;
 					}
 				}
@@ -142,7 +135,7 @@ class AddContactsPage extends Component {
 
 		this.setState({
 			search: search,
-			searchResult: searchResult
+			searchResult: searchResult,
 		});
 	}
 
@@ -159,20 +152,22 @@ class AddContactsPage extends Component {
 		const savedNumbers = this.state.savedNumbers;
 
 		if (!contacts) {
-			console.log("Contacts is empty.");
+			console.log('Contacts is empty.');
 			return;
 		}
 
-		contacts = contacts.filter(function (c) {
+		contacts = contacts.filter(function (contact) {
 			// system contact
-			if (c.givenName.startsWith('#'))
-				return false;
+			if (contact.givenName.startsWith('#')) return false;
 			// filter no-name contacts
-			if (c.givenName === '' && c.familyName === '')
-				return false;
+			if (contact.givenName === '' && contact.familyName === '') return false;
 			// Check if number is already in an imported contact
-			if (savedNumbers.indexOf(c.phoneNumbers[0].number) != -1)
-				return false;
+
+			if (contact.phoneNumbers.length > 0 && savedNumbers !== undefined) {
+				if (savedNumbers.indexOf(contact.phoneNumbers[0].number) != -1) {
+					return false;
+				}
+			}
 
 			return true;
 		});
@@ -182,20 +177,20 @@ class AddContactsPage extends Component {
 	}
 
 	_getContacts() {
-		if (Platform.OS == "ios") {
+		if (Platform.OS == 'ios') {
 			Contacts.getAll((err, contacts) => {
 				this.onContactsFetched(err, contacts);
 			});
 		} else {
 			PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_CONTACTS, {
-				'title': 'Contacts',
-				'message': 'This app would like to view your contacts.',
-				'buttonPositive': 'Please accept bare mortal'
+				title: 'Contacts',
+				message: 'This app would like to view your contacts.',
+				buttonPositive: 'Please accept bare mortal',
 			}).then(() => {
 				Contacts.getAll((err, contacts) => {
 					this.onContactsFetched(err, contacts);
-				})
-			})
+				});
+			});
 		}
 	}
 
@@ -208,25 +203,25 @@ class AddContactsPage extends Component {
 		let phone;
 		if (!contact.item.phoneNumbers.length || !contact.item.phoneNumbers[0])
 			phone = '';
-		else
-			phone = contact.item.phoneNumbers[0].number;
+		else phone = contact.item.phoneNumbers[0].number;
 
 		return (
 			<OnboardingContactCard
 				contactID={contact.item.recordID}
-				firstName={first} lastName={last}
+				firstName={first}
+				lastName={last}
 				phoneNumber={phone}
 				thumbnail={contact.item.thumbnailPath}
 			/>
 		);
 	}
 
-	_addContactSeparators(contacts) {
+	addContactSeparators(contacts) {
 		let processed = [];
 		let lastInitial = null;
 
-		for (let i = 0; i < contacts.length; i++) {
-			let initial = contacts[i].familyName[0];
+		for (var i = 0; i < contacts.length; i++) {
+			let initial = (contacts[i].familyName === String) ? contacts[i].familyName.substring(0, 1) : null;
 			if (initial != lastInitial) {
 				processed.push({ isSeparator: true, letter: initial });
 				lastInitial = initial;
@@ -249,7 +244,7 @@ class AddContactsPage extends Component {
 			contactList = (
 				<FlatList
 					contentContainerStyle={styles.contactList}
-					data={this._addContactSeparators(this.state.searchResult)}
+					data={this.addContactSeparators(this.state.searchResult)}
 					keyExtractor={(item, index) => index.toString()}
 					renderItem={this._renderContactCard}
 				/>
@@ -258,9 +253,7 @@ class AddContactsPage extends Component {
 		return (
 			<View style={styles.container}>
 				<AppBar>
-					<Text style={styles.appBarText}>
-						{'Select your contacts'}
-					</Text>
+					<Text style={styles.appBarText}>{'Select your contacts'}</Text>
 					<ContinueButton continue={this._startApp} />
 				</AppBar>
 				<SearchBar
@@ -268,7 +261,8 @@ class AddContactsPage extends Component {
 					containerStyle={{ backgroundColor: 'white' }}
 					placeholder="Type Here..."
 					onChangeText={this.onSearchKeyChanged}
-					value={search} />
+					value={search}
+				/>
 				{contactList}
 			</View>
 		);
@@ -296,20 +290,16 @@ const styles = StyleSheet.create({
 	},
 });
 
-
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
 	return {
 		contacts: state.contacts,
 	};
 };
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = dispatch => {
 	return {
 		startMainApp: () => dispatch(appActions.contactsDoneImporting()),
 	};
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)(AddContactsPage);
+export default connect(mapStateToProps, mapDispatchToProps)(AddContactsPage);

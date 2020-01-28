@@ -10,6 +10,7 @@ import {
 	Alert,
 	FlatList,
 	EventSubscriptionVendor,
+	ScrollView,
 } from 'react-native';
 import DatePicker from 'react-native-datepicker';
 import RNPickerSelect from 'react-native-picker-select';
@@ -185,6 +186,7 @@ const modalStyles = StyleSheet.create({
 		backgroundColor: '#ffffff',
 	},
 	eventTypeIcon: {
+		alignSelf: 'center',
 		padding: 10,
 		margin: 5,
 		height: 25,
@@ -210,9 +212,6 @@ const pickerSelectStyles = StyleSheet.create({
 		fontSize: 16,
 		paddingHorizontal: 10,
 		paddingVertical: 8,
-		borderWidth: 0.5,
-		borderColor: 'purple',
-		borderRadius: 8,
 		color: 'black',
 		paddingRight: 30, // to ensure the text is never behind the icon
 	},
@@ -220,6 +219,7 @@ const pickerSelectStyles = StyleSheet.create({
 
 const eventListStyles = StyleSheet.create({
 	list: {
+		height: 300,
 		marginTop: 20,
 	},
 	container: {
@@ -345,7 +345,6 @@ export default class CalendarPage extends Component {
 				}
 			};
 		}
-		console.log(JSON.stringify(result));
 		return result;
 	}
 
@@ -365,7 +364,7 @@ export default class CalendarPage extends Component {
 					/>
 				</AppBar>
 				<View style={{ flex: 1 }}>
-					<View>
+					<ScrollView>
 						<Text style={styles.description}>{"Add Birthdays/Events/Reminders to your\nSocial Calendar!"}</Text>
 						<Text style={styles.description2}>{"You'll get a Ping on the day of the event."}</Text>
 						<Calendar
@@ -401,7 +400,7 @@ export default class CalendarPage extends Component {
 								<EventListItem event={item} />
 							)}
 						/>
-					</View>
+					</ScrollView>
 					<View style={styles.rateContainer}>
 						<TouchableOpacity style={{ flex: 1, flexDirection: 'column', justifyContent: 'flex-end' }}
 							onPress={this.onEnjoyBtnPressed}>
@@ -464,7 +463,6 @@ export default class CalendarPage extends Component {
 											// ... You can check the source to find the other keys.
 										}}
 										onDateChange={(date) => {
-											console.log(date);
 											this.setState({ selectedDate: moment(date, 'MMMM Do YYYY').toDate() })
 										}} />
 								</View>
