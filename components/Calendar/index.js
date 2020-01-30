@@ -271,14 +271,15 @@ export default class CalendarPage extends Component {
 
 		this.state = {
 			selectedDate: new Date(),
-			showAddEvent: false,
-			showModalDatePicker: true,
-			showEventTypePicker: true,
-			selectedEventLabel: '',
-			selectedEventIndex: 0,
+			showNewEventModal: false,
+			showNewEventDatePicker: true,
+			showNewEventTypePicker: true,
+			newEventDate: new Date(),
+			newEventLabel: '',
+			newEventIndex: 0,
 		}
 
-		this.onAddEventDoneBtnClicked = this.onAddEventDoneBtnClicked.bind(this);
+		this.onNewEventDoneBtnClicked = this.onNewEventDoneBtnClicked.bind(this);
 	}
 
 	onEnjoyBtnPressed() {
@@ -290,17 +291,21 @@ export default class CalendarPage extends Component {
 		);
 	}
 
-	onDateSelected = (date) => {
+	onCalendarDateSelected = (date) => {
 		this.setState({ selectedDate: moment(date.dateString, 'YYYY-MM-DD').toDate() });
 	}
 
-	onAddEventDoneBtnClicked() {
-		if (EventManager.sharedInstance.addEvent(this.state.selectedEventIndex,
-			this.state.selectedEventLabel,
-			this.state.selectedDate)) {
+	onNewEventDateSelected = (date) => {
+		this.setState({ newEventDate: moment(date, 'MMMM Do YYYY').toDate() })
+	}
+
+	onNewEventDoneBtnClicked() {
+		if (EventManager.sharedInstance.addEvent(this.state.newEventIndex,
+			this.state.newEventLabel,
+			this.state.newEventDate)) {
 
 			this.setState({
-				showAddEvent: false,
+				showNewEventModal: false,
 			});
 
 			this.calendar.setState({});
@@ -341,7 +346,6 @@ export default class CalendarPage extends Component {
 				...result,
 				[strDate]: {
 					dots: colors.map((color, index) => { return { color: color, selectedColor: color }; }),
-					disabled: false,
 				}
 			};
 		}
@@ -349,7 +353,7 @@ export default class CalendarPage extends Component {
 	}
 
 	render() {
-		const selectedEvent = EventTypes.event(this.state.selectedEventIndex);
+		const selectedEvent = EventTypes.event(this.state.newEventIndex);
 		const eventTypePickerData = [];
 		EventTypes.all.map((item, index) => {
 			eventTypePickerData.push({ label: item.title, value: item.title });
@@ -372,7 +376,7 @@ export default class CalendarPage extends Component {
 							horizontal={true}
 							pagingEnabled={true}
 							style={{ marginTop: 20 }}
-							onDayPress={this.onDateSelected}
+							onDayPress={this.onCalendarDateSelected}
 							markedDates={
 								// {
 								// 	'2020-01-25': { dots: [vacation, massage, workout], disabled: false },
@@ -384,7 +388,8 @@ export default class CalendarPage extends Component {
 						<TouchableOpacity
 							onPress={() => {
 								this.setState({
-									showAddEvent: true
+									newEventDate: this.state.selectedDate,
+									showNewEventModal: true
 								})
 							}}>
 							<Image style={styles.calendarAdd} source={require('../../assets/calendar_add.png')}></Image>
@@ -408,17 +413,23 @@ export default class CalendarPage extends Component {
 						</TouchableOpacity>
 					</View>
 				</View>
-				<Modal transparent animationType='fade' visible={this.state.showAddEvent} style={{ backgroundColor: 'blue' }}>
+				<Modal transparent animationType='fade' visible={this.state.showNewEventModal} style={{ backgroundColor: 'blue' }}>
 					<View
 						style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', }}>
-						<Text style={{ alignSelf: 'center', fontSize: 25, backgroundColor: 'white' }}><Moment element={Text} format='MMMM YYYY'>{this.state.selectedDate}</Moment></Text>
+						<Text style={{ alignSelf: 'center', fontSize: 25, backgroundColor: 'white' }}>
+							<Moment element={Text} format='MMMM YYYY'>{this.state.selectedDate}</Moment>
+						</Text>
 						<View style={{ flexWrap: 'wrap', alignSelf: 'center', borderRadius: 10, backgroundColor: Theme.FadedBlueContact, }}>
-							<TouchableOpacity onPress={() => { this.setState({ showAddEvent: false }) }}>
+							<TouchableOpacity onPress={() => { this.setState({ showNewEventModal: false }) }}>
 								<Image source={require('../../assets/close.png')} style={modalStyles.close} />
 							</TouchableOpacity>
 							<View style={modalStyles.container}>
 								<Text style={modalStyles.title}>Event Name:</Text>
-								<TextInput style={modalStyles.input} placeholder='event name here' placeholderTextColor={Theme.DarkGray} text={this.state.selectedEventLabel} onChangeText={(text) => { this.setState({ selectedEventLabel: text }) }} />
+								<TextInput style={modalStyles.input}
+									placeholder='event name here'
+									placeholderTextColor={Theme.DarkGray}
+									text={this.state.newEventLabel}
+									onChangeText={(text) => { this.setState({ newEventLabel: text }) }} />
 								<Text style={modalStyles.title}>Type:</Text>
 								<View style={modalStyles.eventTypeContainer}>
 									<Image style={modalStyles.eventTypeIcon}
@@ -428,7 +439,7 @@ export default class CalendarPage extends Component {
 										onValueChange={value => {
 											EventTypes.all.map((item, index) => {
 												if (item.title == value) {
-													this.setState({ selectedEventIndex: index });
+													this.setState({ newEventIndex: index });
 												}
 											});
 										}}
@@ -448,7 +459,7 @@ export default class CalendarPage extends Component {
 									<DatePicker
 										ref={(picker) => { this.datePicker = picker; }}
 										style={{ flex: 1 }}
-										date={this.state.selectedDate}
+										date={this.state.newEventDate}
 										mode="date"
 										format="MMMM Do YYYY"
 										confirmBtnText="Confirm"
@@ -462,9 +473,7 @@ export default class CalendarPage extends Component {
 											}
 											// ... You can check the source to find the other keys.
 										}}
-										onDateChange={(date) => {
-											this.setState({ selectedDate: moment(date, 'MMMM Do YYYY').toDate() })
-										}} />
+										onDateChange={this.onNewEventDateSelected} />
 								</View>
 								<View style={{ marginTop: 10 }}>
 									<TouchableOpacity style={modalStyles.buttonContainer}
@@ -472,7 +481,7 @@ export default class CalendarPage extends Component {
 										<Text style={modalStyles.buttonTitle}>Change Date</Text>
 									</TouchableOpacity>
 									<TouchableOpacity style={modalStyles.selectContainer}
-										onPress={this.onAddEventDoneBtnClicked}>
+										onPress={this.onNewEventDoneBtnClicked}>
 										<View style={modalStyles.select}>
 											<Image style={modalStyles.selectImage} source={require('../../assets/check.png')} />
 										</View>
