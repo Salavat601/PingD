@@ -206,12 +206,12 @@ class OnboardingContactsPage extends Component {
 				return true;
 			}
 
-			if (contact.givenName && contact.givenName.indexOf(search) != -1) {
+			if (contact.givenName && contact.givenName.toLowerCase().indexOf(search.toLowerCase()) != -1) {
 				console.log('Given Name is Matched.');
 				return true;
 			}
 
-			if (contact.familyName && contact.familyName.indexOf(search) != -1) {
+			if (contact.familyName && contact.familyName.toLowerCase().indexOf(search.toLowerCase()) != -1) {
 				console.log('Family Name is Matched.');
 				return true;
 			}
