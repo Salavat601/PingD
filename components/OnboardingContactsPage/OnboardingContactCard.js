@@ -13,6 +13,7 @@ import setContactPriority from '../../api/redux/actions/setContactPriority';
 import BucketSelector from './BucketSelector';
 import ContactCard from '../generic/ContactCard';
 import { ContactFreqs } from '../ContactUtils';
+import ContactManager, { Contact } from '../../api/models/contactManager'
 import Theme from '../Theme';
 
 
@@ -49,7 +50,7 @@ class OnboardingContactCard extends Component {
 	setPriority(priority) {
 		// selecting the same priority removes the contact
 		if (priority === this.state.priority) {
-			this.props.removeContact(this.state.contact._id);
+			this.props.removeContact(this.state.contact.contactID);
 			this.setState({
 				contact: {},
 				priority: -1,
@@ -59,26 +60,24 @@ class OnboardingContactCard extends Component {
 			let newContact = this.state.contact;
 			newContact.priority = priority;
 
-			this.props.setContactPriority(this.state.contact._id, priority);
+			this.props.setContactPriority(this.state.contact.contactID, priority);
 			this.setState({
 				contact: newContact,
 				priority: priority,
 			});
 		} else {
-			const contact = {
-				_id: this.props.contactID,
+			const contact = new Contact({
+				contactID: this.props.contactID,
 				firstName: this.props.firstName,
 				lastName: this.props.lastName,
-				phoneNumber: this.props.phoneNumber[0].number,
+				phoneNumber: this.props.phoneNumber,
 				thumbnail: this.props.thumbnail,
 				priority: priority,
 				contactFrequency: ContactFreqs[priority],
 				contactMethod: 'contact',
 				lastContact: 0,
-				nextContact: this._getInitialContactTime(priority),
 				notes: '',
-			};
-
+			});
 			this.props.addContact(contact);
 
 			this.setState({

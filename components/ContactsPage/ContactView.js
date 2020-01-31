@@ -106,8 +106,7 @@ class ContactView extends Component {
 				<View style={styles.pickerBorder} />
 				<Picker
 					onValueChange={this._onContactMethodUpdate}
-					selectedValue={this.state.method}
-				>
+					selectedValue={this.state.method}>
 					{items}
 				</Picker>
 			</View>

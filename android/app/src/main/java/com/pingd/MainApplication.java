@@ -21,6 +21,8 @@ import com.rt2zz.reactnativecontacts.ReactNativeContacts;
 import com.wix.reactnativenotifications.RNNotificationsPackage;
 import com.reactnativecommunity.viewpager.RNCViewPagerPackage;
 
+import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;
+
 public class MainApplication extends NavigationApplication {
 
 	@Override
@@ -47,7 +49,8 @@ public class MainApplication extends NavigationApplication {
 				new MainReactPackage(),
 				new ReactNativeContacts(),
 				new RNCViewPagerPackage(),
-				new RNNotificationsPackage(MainApplication.this)
+				new RNNotificationsPackage(MainApplication.this),
+				new ReactNativePushNotificationPackage()
 		);
 	}
 

@@ -5,6 +5,7 @@ import {
 	Image,
 	StyleSheet,
 	TouchableOpacity,
+	TouchableHighlight,
 	Modal,
 	TextInput,
 	Alert,
@@ -12,17 +13,18 @@ import {
 	EventSubscriptionVendor,
 	ScrollView,
 } from 'react-native';
+import { connect } from 'react-redux';
 import DatePicker from 'react-native-datepicker';
 import RNPickerSelect from 'react-native-picker-select';
+import Swipeable from 'react-native-swipeable-row';
 import AppBar from '../generic/AppBar';
 import { Calendar, CalendarList, Agenda } from 'react-native-calendars';
 import Theme from '../Theme';
-import { Colors } from 'react-native/Libraries/NewAppScreen';
 import Moment from 'react-moment';
 import moment from 'moment';
-import CalendarDayComponent from './CalendarDayComponent';
-import EventTypes from '../../api/event/eventTypes';
-import EventManager from '../../api/event/eventManager';
+import EventTypes from '../../api/models/eventTypes'
+import EventManager, { Event } from '../../api/models/eventManager';
+import * as EventActions from '../../api/redux/actions/eventActions'
 
 const styles = StyleSheet.create({
 	container: {
@@ -255,22 +257,55 @@ const isEqualDate = (date1, date2) => {
 		&& (date1.getDate() == date2.getDate())
 }
 
-function EventListItem({ event }) {
-	return (
-		<View style={eventListStyles.container}>
-			<View style={eventListStyles.color} backgroundColor={event.ref.color}></View>
-			<Image style={eventListStyles.icon} source={event.ref.icon}></Image>
-			<Text style={eventListStyles.title}>{event.comment}</Text>
+class EventListItem extends Component {
+	constructor(props) {
+		super(props)
+
+		this.state = {
+			isSwiping: false,
+		}
+	}
+
+	swipeable = null;
+	handleUserBeganScrollingParentView() {
+		this.swipeable.recenter();
+	}
+
+	SwipableRightContent =
+		<View style={{ backgroundColor: "#fd9426", flex: 1, justifyContent: 'center', }}>
+			<View style={{ marginLeft: '1%', marginRight: '65%' }}>
+				<Text style={{ textAlign: 'center', fontWeight: 'bold', color: Theme.White }}>Delete</Text>
+			</View>
 		</View>
-	);
+
+	onDeleteEvent(event) {
+		this.props.onDeleteEvent(event)
+	}
+
+	render() {
+		return (
+			<Swipeable
+				onRef={(ref) => { this.swipeable = ref }}
+				onSwipeRelease={() => { this.swipeable.recenter() }}
+				rightContent={this.SwipableRightContent}
+				onRightActionRelease={() => { this.onDeleteEvent(this.props.event) }} >
+				<View style={eventListStyles.container}>
+					<View style={eventListStyles.color} backgroundColor={this.props.event.typeRef.color}></View>
+					<Image style={eventListStyles.icon} source={this.props.event.typeRef.icon}></Image>
+					<Text style={eventListStyles.title}>{this.props.event.comment}</Text>
+				</View>
+			</Swipeable>
+		)
+	}
 }
 
-export default class CalendarPage extends Component {
+class CalendarPage extends Component {
 	constructor(props) {
 		super(props);
 
 		this.state = {
 			selectedDate: new Date(),
+			isSwiping: false,
 			showNewEventModal: false,
 			showNewEventDatePicker: true,
 			showNewEventTypePicker: true,
@@ -300,20 +335,24 @@ export default class CalendarPage extends Component {
 	}
 
 	onNewEventDoneBtnClicked() {
-		if (EventManager.sharedInstance.addEvent(this.state.newEventIndex,
-			this.state.newEventLabel,
-			this.state.newEventDate)) {
+		const newEvent = new Event({ index: this.state.newEventIndex, comment: this.state.newEventLabel, date: this.state.newEventDate })
+		this.props.newEvent(newEvent)
+		this.setState({
+			showNewEventModal: false,
+		});
 
-			this.setState({
-				showNewEventModal: false,
-			});
+		this.calendar.setState({});
+	}
 
-			this.calendar.setState({});
-		}
+	onDeleteEvent(event) {
+		this.props.deleteEvent(event)
+		this.setState({})
+		this.calendar.setState({})
 	}
 
 	renderDate = (date, state) => {
-		const events = EventManager.sharedInstance.eventWithDate(date)
+		let events = this.props.events ? this.props.events : []
+		events = EventManager.eventWithDate(events, date)
 		return (
 			<View style={{ backgroundColor: Theme.Gray, flexWrap: "wrap" }}>
 				<Text style={{ textAlign: 'center', color: Theme.Gray }}>
@@ -331,15 +370,18 @@ export default class CalendarPage extends Component {
 	}
 
 	renderMarkedDates() {
-		const dates = EventManager.sharedInstance.allDates();
+		const events = this.props.events ? this.props.events : []
+		const dates = EventManager.allDates(events);
 		const format = "YYYY-MM-DD";
 
 		let result = {};
 		for (var i = 0; i < dates.length; i++) {
-			const events = EventManager.sharedInstance.eventWithDate(dates[i]);
+			let events = this.props.events ? this.props.events : []
+			events = EventManager.eventWithDate(events, dates[i]);
 			const strDate = moment(dates[i]).format(format);
 			const colors = events.map((event, index) => {
-				return event.ref.color;
+				console.log(event)
+				return event.typeRef.color
 			})
 
 			result = {
@@ -355,10 +397,11 @@ export default class CalendarPage extends Component {
 	render() {
 		const selectedEvent = EventTypes.event(this.state.newEventIndex);
 		const eventTypePickerData = [];
-		EventTypes.all.map((item, index) => {
-			eventTypePickerData.push({ label: item.title, value: item.title });
+		EventTypes.all.map((eventType, index) => {
+			eventTypePickerData.push({ label: eventType.title, value: eventType.title });
 		});
-		const currentEventList = EventManager.sharedInstance.eventWithDate(this.state.selectedDate);
+		const events = this.props.events ? this.props.events : []
+		const currentEventList = EventManager.eventWithDate(events, this.state.selectedDate);
 		return (
 			<View style={styles.container}>
 				<AppBar height={100}>
@@ -399,11 +442,12 @@ export default class CalendarPage extends Component {
 							<Moment element={Text} format='MMMM Do, YYYY'>{this.state.selectedDate}</Moment>
 						</Text>
 						<FlatList
+							scrollEnabled={!this.state.isSwiping}
 							style={[eventListStyles.list]}
 							data={currentEventList}
-							renderItem={({ item }) => (
-								<EventListItem event={item} />
-							)}
+							renderItem={({ item }) => {
+								return <EventListItem event={item} onDeleteEvent={() => { this.onDeleteEvent(item) }} />
+							}}
 						/>
 					</ScrollView>
 					<View style={styles.rateContainer}>
@@ -495,3 +539,18 @@ export default class CalendarPage extends Component {
 		);
 	}
 }
+
+const mapStateToProps = (state) => {
+	return {
+		events: state.events.events,
+	};
+};
+
+const mapDispatchToProps = (dispatch) => {
+	return {
+		newEvent: (event) => dispatch(EventActions.newEvent(event)),
+		deleteEvent: (event) => dispatch(EventActions.deleteEvent(event))
+	};
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(CalendarPage);

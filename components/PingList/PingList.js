@@ -56,11 +56,7 @@ class PingList extends Component {
 						?
 						<FlatList
 							data={this.props.contacts.sort((c1, c2) => this._comparePingCards(c1, c2))}
-							renderItem={(c) =>
-								<PingCard
-									contact={c.item.contact}
-								/>
-							}
+							renderItem={(c) => <PingCard contact={c.item.contact} />}
 						/>
 						: <Text>no</Text>
 				}

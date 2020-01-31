@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, InteractionManager } from 'react-native';
 import PropTypes from 'prop-types';
-import EventManager from '../../api/event/eventManager';
+import EventManager from '../../api/models/eventManager';
 
 const weekDaysNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 

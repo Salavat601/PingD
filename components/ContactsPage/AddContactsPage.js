@@ -20,6 +20,7 @@ import ContactSeparator from '../generic/ContactSeparator';
 import OnboardingContactCard from '../OnboardingContactsPage/OnboardingContactCard';
 import Theme from '../Theme';
 import PlatformManager from '../../helpers/platformManager';
+import ContactManager, { Contact } from '../../api/models/contactManager'
 
 const ContinueButton = props => (
 	<TouchableOpacity
@@ -96,7 +97,7 @@ class AddContactsPage extends Component {
 		};
 
 		this._getContacts = this._getContacts.bind(this);
-		this._renderContactCard = this._renderContactCard.bind(this);
+		this.renderContactCard = this.renderContactCard.bind(this);
 		this._startApp = this._startApp.bind(this);
 
 		this._getContacts();
@@ -106,7 +107,6 @@ class AddContactsPage extends Component {
 		const { contacts } = this.state;
 		searchResult = contacts.filter(function (contact) {
 			if (!search || search == '') {
-				console.log('Search Key is Empty.');
 				return true;
 			}
 
@@ -149,7 +149,13 @@ class AddContactsPage extends Component {
 			return;
 		}
 
-		const savedNumbers = this.state.savedNumbers;
+		const savedContacts = this.props.contacts
+		let savedNumbers = []
+		for (let i = 0; i < savedContacts.length; i++) {
+			const contact = savedContacts[i].contact
+			savedNumbers.push(contact.phoneNumber)
+		}
+		console.log("Saved Numbers: ", savedNumbers)
 
 		if (!contacts) {
 			console.log('Contacts is empty.');
@@ -164,8 +170,10 @@ class AddContactsPage extends Component {
 			// Check if number is already in an imported contact
 
 			if (contact.phoneNumbers.length > 0 && savedNumbers !== undefined) {
-				if (savedNumbers.indexOf(contact.phoneNumbers[0].number) != -1) {
-					return false;
+				const phoneNumber = contact.phoneNumbers[0].number
+				if (savedNumbers.indexOf(phoneNumber) != -1) {
+					console.log("Found Saved Number: ", phoneNumber)
+					return false
 				}
 			}
 
@@ -194,7 +202,7 @@ class AddContactsPage extends Component {
 		}
 	}
 
-	_renderContactCard(contact) {
+	renderContactCard(contact) {
 		if (contact.item.isSeparator)
 			return <ContactSeparator letter={contact.item.letter} />;
 
@@ -203,7 +211,8 @@ class AddContactsPage extends Component {
 		let phone;
 		if (!contact.item.phoneNumbers.length || !contact.item.phoneNumbers[0])
 			phone = '';
-		else phone = contact.item.phoneNumbers[0].number;
+		else
+			phone = contact.item.phoneNumbers[0].number;
 
 		return (
 			<OnboardingContactCard
@@ -246,7 +255,7 @@ class AddContactsPage extends Component {
 					contentContainerStyle={styles.contactList}
 					data={this.addContactSeparators(this.state.searchResult)}
 					keyExtractor={(item, index) => index.toString()}
-					renderItem={this._renderContactCard}
+					renderItem={this.renderContactCard}
 				/>
 			);
 

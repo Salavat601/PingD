@@ -2,10 +2,9 @@ import { Navigation } from 'react-native-navigation';
 
 import ContactsPage from './ContactsPage/ContactsPage';
 import PingList from './PingList/PingList';
-import Calendar from './Calendar';
+import CalendarPage from './Calendar';
 import Onboarding from './Onboarding/Onboarding';
-import OnboardingContactsPage
-	from './OnboardingContactsPage/OnboardingContactsPage';
+import OnboardingContactsPage from './OnboardingContactsPage/OnboardingContactsPage';
 import AddContactsPage from './ContactsPage/AddContactsPage';
 
 export function registerScreens(store, Provider) {
@@ -13,7 +12,7 @@ export function registerScreens(store, Provider) {
 		ContactsPage, Provider, store
 	);
 	Navigation.registerComponentWithRedux('PingD.Calendar', () =>
-		Calendar, Provider, store
+		CalendarPage, Provider, store
 	);
 	Navigation.registerComponentWithRedux('PingD.PingList', () =>
 		PingList, Provider, store

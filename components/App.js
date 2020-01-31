@@ -48,18 +48,11 @@ export default class App extends Component {
 	}
 
 	startApp(root) {
+
+
+
 		switch (root) {
 			case 'app': {
-				Navigation.setDefaultOptions({
-					bottomTabs: {
-						backgroundColor: 'white',
-						barStyle: 'default',
-						translucent: false,
-					},
-					bottomTab: {
-						selectedTextColor: Theme.Blue,
-					},
-				});
 				Navigation.setRoot({
 					root: {
 						bottomTabs: {
@@ -67,47 +60,24 @@ export default class App extends Component {
 								component: {
 									name: 'PingD.Contacts',
 									options: {
-										bottomTab: {
-											text: 'Contacts',
-											icon: require('../assets/contacts_unselected.png'),
-											selectedIcon: require('../assets/contacts_selected.png'),
-										},
-										topBar: {
-											visible: false,
-											animate: false,
-										}
+										bottomTab: { text: 'Contacts', icon: require('../assets/contacts_unselected.png'), selectedIcon: require('../assets/contacts_selected.png'), },
+										topBar: { visible: false, animate: false, }
 									}
 								}
-							},
-							{
+							}, {
 								component: {
 									name: 'PingD.PingList',
 									options: {
-										bottomTab: {
-											text: 'Ping List',
-											icon: require('../assets/ping_list_unselected.png'),
-											selectedIcon: require('../assets/ping_list_selected.png'),
-										},
-										topBar: {
-											visible: false,
-											animate: false,
-										}
+										bottomTab: { text: 'Ping List', icon: require('../assets/ping_list_unselected.png'), selectedIcon: require('../assets/ping_list_selected.png'), },
+										topBar: { visible: false, animate: false, }
 									}
 								}
-							},
-							{
+							}, {
 								component: {
 									name: 'PingD.Calendar',
 									options: {
-										bottomTab: {
-											text: 'Calendar',
-											icon: require('../assets/calendar_unselected.png'),
-											selectedIcon: require('../assets/calendar_selected.png'),
-										},
-										topBar: {
-											visible: false,
-											animate: false,
-										}
+										bottomTab: { text: 'Calendar', icon: require('../assets/calendar_unselected.png'), selectedIcon: require('../assets/calendar_selected.png'), },
+										topBar: { visible: false, animate: false, }
 									}
 								}
 							},]
@@ -118,27 +88,28 @@ export default class App extends Component {
 			}
 
 			case 'login': {
-				Navigation.setRoot({
-					root: {
-						stack: {
-							children: [{
-								component: {
-									name: 'PingD.Onboarding',
-									options: {
-										topBar: {
-											visible: false,
-											animate: false,
-										}
-									},
-									passProps: {
-										text: 'stack with one child'
-									},
-								}
-							}],
+				Navigation.events().registerAppLaunchedListener(() => {
+					Navigation.setDefaultOptions({
+						bottomTabs: { backgroundColor: 'white', barStyle: 'default', translucent: false, },
+						bottomTab: { selectedTextColor: Theme.Blue, },
+					});
 
+					Navigation.setRoot({
+						root: {
+							stack: {
+								children: [{
+									component: {
+										name: 'PingD.Onboarding',
+										options: {
+											topBar: { visible: false, animate: false, }
+										},
+										passProps: { text: 'stack with one child' },
+									}
+								}],
+							}
 						}
-					}
-				});
+					});
+				})
 				return;
 			}
 

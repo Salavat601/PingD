@@ -32,21 +32,21 @@ class ContactsPage extends Component {
 	}
 
 	_addContactSeparators(contacts) {
-		let processed = [];
+		let results = [];
 		let lastInitial = null;
 
 		for (let i = 0; i < contacts.length; i++) {
 			let contact = contacts[i].contact;
 			let initial = contact.lastName[0];
 			if (initial != lastInitial) {
-				processed.push({ isSeparator: true, letter: initial });
+				results.push({ isSeparator: true, letter: initial });
 				lastInitial = initial;
 			}
 
-			processed.push(contact);
+			results.push(contact);
 		}
 
-		return processed;
+		return results;
 	}
 
 	_showContact(contact) {

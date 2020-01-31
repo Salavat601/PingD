@@ -9,6 +9,7 @@ import {
 	Platform,
 	PermissionsAndroid,
 } from 'react-native';
+import { SearchBar } from 'react-native-elements';
 import Contacts from 'react-native-contacts';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -19,6 +20,7 @@ import AppBar from '../generic/AppBar';
 import ContactSeparator from '../generic/ContactSeparator';
 import OnboardingContactCard from './OnboardingContactCard';
 import Theme from '../Theme';
+import ContactManager, { Contact } from '../../api/models/contactManager'
 
 
 const ContinueButton = (props) => (
@@ -102,6 +104,8 @@ class OnboardingContactsPage extends Component {
 
 		this.state = {
 			contacts: [],
+			searchKey: "",
+			searchResult: [],
 		};
 
 		this._getContacts = this._getContacts.bind(this);
@@ -124,6 +128,7 @@ class OnboardingContactsPage extends Component {
 
 		contacts = contacts.filter(filterContacts);
 		this.setState({ contacts: contacts.sort(sortContacts) });
+		this.searchContacts("")
 	}
 
 	async _getContacts() {
@@ -190,13 +195,53 @@ class OnboardingContactsPage extends Component {
 		this.props.startMainApp();
 	}
 
+	onSearchKeyChanged = search => {
+		this.searchContacts(search);
+	};
+
+	searchContacts(search) {
+		const { contacts } = this.state;
+		searchResult = contacts.filter(function (contact) {
+			if (!search || search == '') {
+				return true;
+			}
+
+			if (contact.givenName && contact.givenName.indexOf(search) != -1) {
+				console.log('Given Name is Matched.');
+				return true;
+			}
+
+			if (contact.familyName && contact.familyName.indexOf(search) != -1) {
+				console.log('Family Name is Matched.');
+				return true;
+			}
+
+			if (contact.phoneNumbers) {
+				for (let i = 0; i < contact.phoneNumbers.length; i++) {
+					if (contact.phoneNumbers[i].number.indexOf(search) != -1) {
+						return true;
+					}
+				}
+			}
+
+			// console.log("%s,%s,%s", search, contact.givenName, contact.familyName);
+
+			return false;
+		});
+
+		this.setState({
+			searchKey: search,
+			searchResult: searchResult,
+		});
+	}
+
 	render() {
 		let contactList = null;
 		if (this.state.contacts.length > 0)
 			contactList = (
 				<FlatList
 					contentContainerStyle={styles.contactList}
-					data={this._addContactSeparators(this.state.contacts)}
+					data={this._addContactSeparators(this.state.searchResult)}
 					keyExtractor={(item, index) => index.toString()}
 					renderItem={this._renderContactCard}
 				/>
@@ -210,6 +255,13 @@ class OnboardingContactsPage extends Component {
 					</Text>
 					<ContinueButton continue={this._startApp} />
 				</AppBar>
+				<SearchBar
+					inputContainerStyle={{ backgroundColor: 'white' }}
+					containerStyle={{ backgroundColor: 'white' }}
+					placeholder="Type Here..."
+					onChangeText={(text) => { this.onSearchKeyChanged(text) }}
+					value={this.state.searchKey}
+				/>
 				{contactList}
 			</View>
 		);
