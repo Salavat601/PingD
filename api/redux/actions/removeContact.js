@@ -1,10 +1,10 @@
 export const REMOVE_CONTACT = 'REMOVE_CONTACT';
 
-export default function removeContact(contactID) {
+export default function removeContact(contact) {
     return {
         type: REMOVE_CONTACT,
         payload: {
-            contactID,
+            contact: contact,
         },
     };
 }

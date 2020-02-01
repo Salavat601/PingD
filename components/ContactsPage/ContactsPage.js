@@ -15,9 +15,29 @@ import ContactSeparator from '../generic/ContactSeparator';
 import * as appActions from '../../api/redux/actions/appActions/changeRoot';
 import ContactView from './ContactView';
 import Theme from '../Theme';
-
 import compareContacts from '../../utils/compareContacts';
+import { Contact } from '../../api/models/contactManager'
 
+function ContactListItem({ contact, onSelect }) {
+	if (contact.isSeparator) {
+		return <ContactSeparator letter={contact.letter} />
+	}
+	let name = contact.fullName();
+
+	return (
+		<TouchableOpacity
+			style={styles.cardContainer}
+			onPress={() => { onSelect(contact) }}>
+			<ContactCard
+				style={[styles.card]}
+				name={name}
+				phoneNumber={contact.phoneNumber}
+				priority={contact.priority}
+				thumbnail={contact.thumbnail}
+			/>
+		</TouchableOpacity>
+	);
+}
 
 class ContactsPage extends Component {
 	constructor(props) {
@@ -26,18 +46,15 @@ class ContactsPage extends Component {
 		this.state = {
 			viewing: null,
 		};
-
-		this._renderContactCard = this._renderContactCard.bind(this);
-		this._resetContact = this._resetContact.bind(this);
 	}
 
-	_addContactSeparators(contacts) {
+	addContactSeparators(contacts) {
 		let results = [];
 		let lastInitial = null;
 
 		for (let i = 0; i < contacts.length; i++) {
-			let contact = contacts[i].contact;
-			let initial = contact.lastName[0];
+			let contact = contacts[i]
+			let initial = contact.lastName.length > 0 ? contact.lastName.substring(0, 1) : "";
 			if (initial != lastInitial) {
 				results.push({ isSeparator: true, letter: initial });
 				lastInitial = initial;
@@ -49,55 +66,41 @@ class ContactsPage extends Component {
 		return results;
 	}
 
-	_showContact(contact) {
-		this.setState({ viewing: contact._id });
+	showContact(contact) {
+		if (contact.isSeparator)
+			return
+		this.setState({ viewing: contact.contactId })
 	}
 
-	_resetContact() {
+	resetContact = () => {
 		this.setState({ viewing: null });
-	}
-
-	_renderContactCard(contact) {
-		if (contact.item.isSeparator)
-			return <ContactSeparator letter={contact.item.letter} />;
-		let name = `${contact.item.firstName} ${contact.item.lastName}`;
-
-		return (
-			<TouchableOpacity
-				style={styles.cardContainer}
-				onPress={this._showContact.bind(this, contact.item)}>
-				<ContactCard
-					style={[styles.card]}
-					name={name}
-					phoneNumber={contact.item.phoneNumber}
-					priority={contact.item.priority}
-					thumbnail={contact.item.thumbnail}
-				/>
-			</TouchableOpacity>
-		);
 	}
 
 	render() {
 		let contacts = this.props.contacts ? this.props.contacts : [];
 		contacts.sort(compareContacts);
 
-		let contact = null;
-		if (this.state.viewing !== null) {
-			let shown = contacts.find(c => c.contact._id === this.state.viewing);
-			contact = <ContactView contact={shown.contact} reset={this._resetContact} />;
+		let contactView = null;
+		if (this.state.viewing) {
+			let shownContact = contacts.find(contact => contact.contactId === this.state.viewing);
+			if (shownContact) contactView = <ContactView contact={shownContact} reset={this.resetContact} />;
 		}
 
 		return (
 			<View style={styles.container}>
-				{contact}
+				{contactView}
 				<AppBar height={72}>
 					<Text style={styles.title}>Contacts</Text>
 				</AppBar>
 				<FlatList
 					contentContainerStyle={styles.contactList}
-					data={this._addContactSeparators(contacts)}
+					data={this.addContactSeparators(contacts)}
 					keyExtractor={(item, index) => index.toString()}
-					renderItem={this._renderContactCard}
+					renderItem={({ item }) =>
+						<ContactListItem
+							contact={item}
+							onSelect={() => { this.showContact(item) }} />
+					}
 				/>
 				<TouchableOpacity onPress={() => this.props.addMoreContacts()}
 					style={styles.addButton}>
@@ -160,7 +163,7 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => {
 	return {
-		contacts: state.contacts,
+		contacts: state.contacts.contacts,
 	};
 };
 

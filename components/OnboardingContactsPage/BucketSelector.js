@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
     StyleSheet,
     Text,
@@ -8,7 +8,8 @@ import {
 import PropTypes from 'prop-types';
 
 import Theme from '../Theme';
-import {Types} from '../ContactUtils';
+import { Types } from '../ContactUtils';
+import { ContactPriority, Contact } from "../../api/models/contactManager"
 
 
 const Selector = (props) => {
@@ -16,19 +17,19 @@ const Selector = (props) => {
     let bgColor = '';
 
     if (props.friend) {
-        bgColor = props.selected ? Theme.Green : Theme.FadedGreen;
-        text = 'Friend';
+        bgColor = props.selected ? ContactPriority.Friend.color : ContactPriority.Friend.fadeColor;
+        text = ContactPriority.Friend.text;
     } else if (props.acquaintance) {
-        bgColor = props.selected ? Theme.Blue : Theme.FadedBlue;
-        text = 'Acquaintance';
+        bgColor = props.selected ? ContactPriority.Acquaintance.color : ContactPriority.Acquaintance.fadeColor;
+        text = ContactPriority.Acquaintance.text;
     } else if (props.touchpoint) {
-        bgColor = props.selected ? Theme.Purple : Theme.FadedPurple;
-        text = 'Touchpoint';
+        bgColor = props.selected ? ContactPriority.TouchPoint.color : ContactPriority.TouchPoint.fadeColor;
+        text = ContactPriority.TouchPoint.text;
     }
 
     return (
-        <TouchableOpacity style={{flex: 1}} onPress={props.setPriority}>
-            <View style={[styles.selector, {backgroundColor: bgColor}]}>
+        <TouchableOpacity style={{ flex: 1 }} onPress={props.setPriority}>
+            <View style={[styles.selector, { backgroundColor: bgColor }]}>
                 <Text style={styles.selectorText}>{text}</Text>
             </View>
         </TouchableOpacity>
@@ -51,7 +52,7 @@ class BucketSelector extends Component {
     }
 
     select(priority) {
-        this.setState({selected: priority});
+        this.setState({ selected: priority });
         this.props.setPriority(priority);
         this.props.expand();
     }
@@ -61,16 +62,16 @@ class BucketSelector extends Component {
         return (
             <View style={styles.container}>
                 <Selector friend
-                    selected={priority < 0 || priority === Types.Friend}
-                    setPriority={() => this.select(Types.Friend)}
+                    selected={priority === ContactPriority.Friend.rawValue || priority == ContactPriority.Remove.rawValue}
+                    setPriority={() => this.select(ContactPriority.Friend.rawValue)}
                 />
                 <Selector acquaintance
-                    selected={priority < 0 || priority === Types.Acquaintance}
-                    setPriority={() => this.select(Types.Acquaintance)}
+                    selected={priority === ContactPriority.Acquaintance.rawValue || priority == ContactPriority.Remove.rawValue}
+                    setPriority={() => this.select(ContactPriority.Acquaintance.rawValue)}
                 />
                 <Selector touchpoint
-                    selected={priority < 0 || priority === Types.Touchpoint}
-                    setPriority={() => this.select(Types.Touchpoint)}
+                    selected={priority === ContactPriority.TouchPoint.rawValue || priority == ContactPriority.Remove.rawValue}
+                    setPriority={() => this.select(ContactPriority.TouchPoint.rawValue)}
                 />
             </View>
         );

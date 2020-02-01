@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 const _ = require('lodash');
 import {
-  StyleSheet,
-  TouchableOpacity,
-  TouchableHighlight,
-  View,
-  Text,
+	StyleSheet,
+	TouchableOpacity,
+	TouchableHighlight,
+	View,
+	Text,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -18,225 +18,223 @@ import Swipeable from 'react-native-swipeable-row';
 
 
 class PingCard extends Component {
-  constructor(props) {
-    super(props);
+	constructor(props) {
+		super(props);
 
-    swipeable = null;
-    var oldDate = new Date(this.props.contact.nextContact);
-    difTime = oldDate.getTime() - new Date().getTime();
+		var oldDate = new Date(this.props.contact.nextContact);
+		difTime = oldDate.getTime() - new Date().getTime();
 
-    this.state = {
-      daysUntil: Math.floor(difTime / (1000 * 60 * 60 * 24)),
-    };
-  }
+		this.state = {
+			daysUntil: Math.floor(difTime / (1000 * 60 * 60 * 24)),
+		};
+	}
 
-  sendText() {
+	sendText() {
+		swipeable = null;
+		const phoneNumber = this.props.contact.phoneNumberCleaned()
+		Communications.text(phoneNumber,
+			`Hey ${this.props.contact.firstName}! It's been a while, would love to catch up`);
+		console.log('texted');
+	}
 
+	handleUserBeganScrollingParentView() {
+		this.swipeable.recenter();
+	}
 
-    Communications.textWithoutEncoding(this.props.contact.phoneNumber, `Hey ${this.props.contact.firstName}! It's been a while, would love to catch up`);
-    console.log('texted');
+	getSwipeStyle(color) {
+		var style = {
+			marginBottom: 10,
+			backgroundColor: color,
+			flex: 1,
+			justifyContent: 'center',
+		};
 
+		return style;
+	}
 
-  }
+	getSubtitle() {
+		var oldDate = new Date(this.props.contact.nextContact);
+		difTime = oldDate.getTime() - new Date().getTime();
+		daysUntil = Math.floor(difTime / (1000 * 60 * 60 * 24));
 
-  handleUserBeganScrollingParentView() {
-    this.swipeable.recenter();
-  }
+		if (daysUntil == 1) {
+			daysLeft = `(Tomorrow's ping)`;
+		}
+		else if (daysUntil == 0) {
+			daysLeft = `(Today's ping)`;
+		}
+		else if (daysUntil < 0) {
+			days = Math.abs(daysUntil);
+			daysLeft = `(${days} days overdue...)`;
+		}
+		else {
+			daysLeft = `(${daysUntil} days)`
+		}
 
-  getSwipeStyle(color) {
-    var style = {
-      marginBottom: 10,
-      backgroundColor: color,
-      flex: 1,
-      justifyContent: 'center',
-    };
+		var subtitle = <Text>
+			<Text>Ping Date: {oldDate.toDateString()}</Text>
+			<Text style={{ fontWeight: "bold" }}> {daysLeft}</Text>
+		</Text>;
 
-    return style;
-  }
+		return subtitle;
 
-  getSubtitle() {
-    var oldDate = new Date(this.props.contact.nextContact);
-    difTime = oldDate.getTime() - new Date().getTime();
-    daysUntil = Math.floor(difTime / (1000 * 60 * 60 * 24));
+	}
 
-    if (daysUntil == 1) {
-      daysLeft = `(Tomorrow's ping)`;
-    }
-    else if (daysUntil == 0) {
-      daysLeft = `(Today's ping)`;
-    }
-    else if (daysUntil < 0) {
-      days = Math.abs(daysUntil);
-      daysLeft = `(${days} days overdue...)`;
-    }
-    else {
-      daysLeft = `(${daysUntil} days)`
-    }
+	getSwipeStyle(color) {
+		var style = {
+			margin: 10,
+			marginLeft: 0,
+			marginRight: 0,
+			backgroundColor: color,
+			flex: 1,
+			justifyContent: 'center',
+		};
 
-    var subtitle = <Text>
-      <Text>Ping Date: {oldDate.toDateString()}</Text>
-      <Text style={{ fontWeight: "bold" }}> {daysLeft}</Text>
-    </Text>;
+		return style;
+	}
 
-    return subtitle;
-
-  }
-
-  getSwipeStyle(color) {
-    var style = {
-      margin: 10,
-      marginLeft: 0,
-      marginRight: 0,
-      backgroundColor: color,
-      flex: 1,
-      justifyContent: 'center',
-    };
-
-    return style;
-  }
-
-  getCardStyle() {
+	getCardStyle() {
 
 
-    var style = {
-      height: 80,
-      flex: 1,
-      margin: 10,
-      borderWidth: 0.5,
-      borderRadius: 5,
-      borderColor: Theme.Gray,
-      backgroundColor: Theme.LightBlue,
-    };
+		var style = {
+			height: 80,
+			flex: 1,
+			margin: 10,
+			borderWidth: 0.5,
+			borderRadius: 5,
+			borderColor: Theme.Gray,
+			backgroundColor: Theme.LightBlue,
+		};
 
-    // if (this.state.daysUntil < 0) {
-    //   style.borderWidth = 4;
-    //   style.borderColor = '#C7070F';
-    //
-    // }
+		// if (this.state.daysUntil < 0) {
+		//   style.borderWidth = 4;
+		//   style.borderColor = '#C7070F';
+		//
+		// }
 
 
 
-    return style;
-  }
+		return style;
+	}
 
-  _changeDays(type) {
-    var oldDate = new Date(this.props.contact.nextContact);
-    var days = oldDate.getDate();
+	_changeDays(type) {
+		var oldDate = new Date(this.props.contact.nextContact);
+		var days = oldDate.getDate();
 
-    var updatedContact = _.cloneDeep(this.props.contact);
+		var updatedContact = _.cloneDeep(this.props.contact);
 
-    console.log('ORIGINAL CONTACT DATE:', updatedContact.nextContact);
+		console.log('ORIGINAL CONTACT DATE:', updatedContact.nextContact);
 
-    // Add buffer for pings, later date for snooze
-    let snooze = SnoozeFreqs[updatedContact.priority];
+		// Add buffer for pings, later date for snooze
+		let snooze = SnoozeFreqs[updatedContact.priority];
 
-    if (type == 'PingD') {
-      var freq = ContactFreqs[updatedContact.priority];
-      var freq = this.props.contact.contactFrequency
-      // console.log('FREQ:',freq);
-      // console.log('FreqNum:',this.props.contact.contactFrequency);
-      let start = Math.floor(freq / 2);
-      let rand = Math.floor(Math.random() * freq) - start;
+		if (type == 'PingD') {
+			var freq = ContactFreqs[updatedContact.priority];
+			var freq = this.props.contact.contactFrequency
+			// console.log('FREQ:',freq);
+			// console.log('FreqNum:',this.props.contact.contactFrequency);
+			let start = Math.floor(freq / 2);
+			let rand = Math.floor(Math.random() * freq) - start;
 
-      var days = start + rand + snooze;
+			var days = start + rand + snooze;
 
-      var today = Math.round(new Date().getTime());
+			var today = Math.round(new Date().getTime());
 
-      updatedContact.lastContact = today;
-    }
-    else if (type == 'snooze') {
-      // All contacts are snoozed 3 days
-      var today = Math.round(oldDate.getTime());
-      var days = snooze;
-    }
+			updatedContact.lastContact = today;
+		}
+		else if (type == 'snooze') {
+			// All contacts are snoozed 3 days
+			var today = Math.round(oldDate.getTime());
+			var days = snooze;
+		}
 
-    let toc = today + (days * 24 * 60 * 60 * 1000);
-    var newPingDate = new Date(toc);
-    updatedContact.nextContact = newPingDate;
+		let toc = today + (days * 24 * 60 * 60 * 1000);
+		var newPingDate = new Date(toc);
+		updatedContact.nextContact = newPingDate;
 
 
-    this.props.updateContact(updatedContact);
-  }
+		this.props.updateContact(updatedContact);
+	}
 
-  render() {
+	render() {
 
-    const leftContent = <View style={this.getSwipeStyle('#53d769')}>
-      <View style={{ marginRight: '1%', marginLeft: '65%' }}>
-        <Text style={styles.swipeText}>Connected!</Text>
-      </View>
-    </View>;
+		const leftContent = <View style={this.getSwipeStyle('#53d769')}>
+			<View style={{ marginRight: '1%', marginLeft: '65%' }}>
+				<Text style={styles.swipeText}>Connected!</Text>
+			</View>
+		</View>;
 
-    const rightContent = <View style={this.getSwipeStyle('#fd9426')}>
-      <View style={{ marginLeft: '1%', marginRight: '65%' }}>
-        <Text style={styles.swipeText}>Snooze</Text>
-      </View>
-    </View>;
+		const rightContent = <View style={this.getSwipeStyle('#fd9426')}>
+			<View style={{ marginLeft: '1%', marginRight: '65%' }}>
+				<Text style={styles.swipeText}>Snooze</Text>
+			</View>
+		</View>;
 
-    let name = `${this.props.contact.firstName} ${this.props.contact.lastName}`;
+		let name = `${this.props.contact.firstName} ${this.props.contact.lastName}`;
 
-    return (
+		return (
 
-      <Swipeable onRef={ref => this.swipeable = ref}
-        leftContent={leftContent}
-        onLeftActionRelease={() => this._changeDays('PingD')}
-        rightContent={rightContent}
-        onRightActionRelease={() => this._changeDays('snooze')}>
-        <View style={this.getCardStyle()}>
-          <TouchableOpacity onLongPress={() => this.sendText(this.props.contact.phone)}>
-            <Text style={styles.title}>{name}</Text>
-            <Text style={styles.subtitle}> {this.getSubtitle()} </Text>
-          </TouchableOpacity>
-        </View>
-      </Swipeable>
-    )
-  }
+			<Swipeable onRef={ref => this.swipeable = ref}
+				leftContent={leftContent}
+				onLeftActionRelease={() => this._changeDays('PingD')}
+				rightContent={rightContent}
+				onRightActionRelease={() => this._changeDays('snooze')}>
+				<View style={this.getCardStyle()}>
+					<TouchableOpacity onLongPress={() => this.sendText(this.props.contact.phone)}>
+						<Text style={styles.title}>{name}</Text>
+						<Text style={styles.subtitle}> {this.getSubtitle()} </Text>
+					</TouchableOpacity>
+				</View>
+			</Swipeable>
+		)
+	}
 }
 
 PingCard.propTypes = {
-  changeDays: PropTypes.func,
+	changeDays: PropTypes.func,
 };
 
 const styles = StyleSheet.create({
-  container: {
-    height: 80,
-    flex: 1,
-    backgroundColor: '#bdc3c7',
-    margin: 10,
-    flex: 1,
-    paddingTop: 22
-  },
-  swipeText: {
-    textAlign: 'center',
-    fontWeight: 'bold',
-    color: Theme.White
-  },
-  card: {
-    borderWidth: 4,
-    marginBottom: 10,
-  },
-  title: {
-    padding: 10,
-    paddingBottom: 0,
-    fontSize: 18,
-    height: 44,
-    textAlign: 'center',
-    fontWeight: 'bold',
-  },
-  subtitle: {
-    paddingTop: 2,
-    paddingBottom: 10,
-    fontSize: 9,
-    height: 22,
-    textAlign: 'center',
-  },
+	container: {
+		height: 80,
+		flex: 1,
+		backgroundColor: '#bdc3c7',
+		margin: 10,
+		flex: 1,
+		paddingTop: 22
+	},
+	swipeText: {
+		textAlign: 'center',
+		fontWeight: 'bold',
+		color: Theme.White
+	},
+	card: {
+		borderWidth: 4,
+		marginBottom: 10,
+	},
+	title: {
+		padding: 10,
+		paddingBottom: 0,
+		fontSize: 18,
+		height: 44,
+		textAlign: 'center',
+		fontWeight: 'bold',
+	},
+	subtitle: {
+		paddingTop: 2,
+		paddingBottom: 10,
+		fontSize: 9,
+		height: 22,
+		textAlign: 'center',
+	},
 });
 
 const mapStateToProps = () => {
-  return {};
+	return {};
 };
 
 const mapDispatchToProps = (dispatch) => ({
-  updateContact: (c) => dispatch(updateContact(c)),
+	updateContact: (c) => dispatch(updateContact(c)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(PingCard);

@@ -6,26 +6,37 @@ import { SET_CONTACT_PRIORITY } from '../actions/setContactPriority';
 import { UPDATE_CONTACT } from '../actions/updateContact';
 import * as notifications from '../actions/PingNotifications'
 
-const initialState = [];
+const initialState = {
+    contacts: []
+};
 
 export default function contacts(contactsState = initialState, action) {
     switch (action.type) {
         case ADD_CONTACT: {
             const newState = _.cloneDeep(contactsState);
             const { payload } = action;
-            newState.push(payload);
-            notifications.add(payload.contact);
+
+            if (payload.contact) {
+                const found = newState.contacts.find(c => c.contactId === payload.contact.contactId)
+                if (!found) {
+                    newState.contacts.push(payload.contact);
+                    notifications.add(payload.contact);
+                }
+            }
+
             return newState;
         }
 
         case SET_CONTACT_PRIORITY: {
             const newState = _.cloneDeep(contactsState);
             const { payload } = action;
-            const { contactID, priority } = payload;
+            const { contact, priority } = payload
 
-            for (let i = 0; i < newState.length; i++) {
-                if (newState[i].contact._id === contactID)
-                    newState[i].contact.priority = priority;
+            for (let i = 0; i < newState.contacts.length; i++) {
+                if (newState.contacts[i].contactId === contact.contactId) {
+                    newState.contacts[i].setPriority(priority);
+                    break
+                }
             }
 
             return newState;
@@ -34,19 +45,14 @@ export default function contacts(contactsState = initialState, action) {
         case REMOVE_CONTACT: {
             const newState = _.cloneDeep(contactsState);
             const { payload } = action;
-            const { contactID } = payload;
-            console.log('ConactID:', contactID);
-            let finalState = [];
-            for (let i = 0; i < newState.length; i++) {
-                let contact = newState[i].contact;
-                if (contact._id !== contactID) {
-                    finalState.push(newState[i]);
-                    notifications.remove(newState[i].contact);
-                }
-            }
-            // console.log('REMOVE:',payload);
-            // console.log('REMOVE (action)',action);
-            // notifications.remove(payload.contact);
+
+            const results = newState.contacts.filter(c => c.contactId !== payload.contact.contactId)
+            let finalState = { contacts: results };
+
+            notifications.remove(payload.contact)
+
+            console.log("Removed Contact: ", payload.contact)
+
             return finalState;
         }
 
@@ -55,11 +61,13 @@ export default function contacts(contactsState = initialState, action) {
             const { payload } = action;
             const { contact } = payload;
 
-            for (let i = 0; i < newState.length; i++) {
-                let oldContact = newState[i].contact;
-                if (contact._id === oldContact._id) {
-                    newState[i].contact = contact;
-                    notifications.update(newState[i].contact);
+            for (let i = 0; i < newState.contacts.length; i++) {
+                let oldContact = newState.contacts[i];
+                if (contact.contactId === oldContact.contactId) {
+                    newState.contacts[i] = contact;
+                    notifications.update(newState.contacts[i]);
+                    console.log("Contact Updated: ", contact)
+                    break
                 }
             }
             return newState;

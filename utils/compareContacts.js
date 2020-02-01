@@ -1,6 +1,6 @@
-export default function(contact1, contact2) {
-    let c1 = contact1.contact;
-    let c2 = contact2.contact;
+export default function (contact1, contact2) {
+    let c1 = contact1;
+    let c2 = contact2;
 
     if (c1.lastName < c2.lastName)
         return -1;

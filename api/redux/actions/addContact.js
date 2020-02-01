@@ -4,7 +4,7 @@ export default function addContact(contact) {
     return {
         type: ADD_CONTACT,
         payload: {
-            contact,
+            contact: contact,
         },
     };
 }

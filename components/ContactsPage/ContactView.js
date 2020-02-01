@@ -10,16 +10,15 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import Card from '../generic/Card';
-import { ContactMethods } from '../ContactUtils';
 import ContactOption from './ContactOption';
 import ContactViewTop from './ContactViewTop';
 import PriorityPicker from './PriorityPicker';
-import { Types } from '../ContactUtils';
 import Theme from '../Theme';
 
 import setContactPriority from '../../api/redux/actions/setContactPriority';
 import updateContact from '../../api/redux/actions/updateContact';
 import removeContact from '../../api/redux/actions/removeContact';
+import { ContactPriority, ContactMethods } from '../../api/models/contactManager';
 
 
 class ContactView extends Component {
@@ -51,19 +50,18 @@ class ContactView extends Component {
 
 	_setContactPriority(priority) {
 		console.log("New Priority: ", priority);
-		if (priority === Types.Remove) {
+		if (priority === ContactPriority.Remove.rawValue) {
 			console.log('remove contact')
-			this.props.removeContact(this.props.contact._id);
-			this.props.reset();
+			this.props.removeContact(this.props.contact);
+		} else {
+			this.props.setContactPriority(this.props.contact, priority);
 		}
-		else { this.props.setContactPriority(this.props.contact._id, priority); }
 		this._togglePriorityPicker();
 	}
 
 	_onContactMethodUpdate(newMethod) {
 		this.props.contact.contactMethod = newMethod;
 		this.props.updateContact(this.props.contact);
-		console.log('CONTACT', this.props.contact);
 		this.setState({ method: newMethod });
 	}
 
@@ -96,16 +94,18 @@ class ContactView extends Component {
 
 	_getContactMethodPicker() {
 		let items = [];
-		for (let i = 0; i < ContactMethods.length; i++) {
-			let val = ContactMethods[i];
-			items.push(<Picker.Item key={i} label={val} value={val} />);
+		let i = 0
+		for (let method in ContactMethods) {
+			const text = ContactMethods[`${method}`].text
+			items.push(<Picker.Item key={i} label={text} value={text} />);
+			i++
 		}
 
 		return (
 			<View>
 				<View style={styles.pickerBorder} />
 				<Picker
-					onValueChange={this._onContactMethodUpdate}
+					onValueChange={(value) => this._onContactMethodUpdate(value)}
 					selectedValue={this.state.method}>
 					{items}
 				</Picker>
@@ -131,9 +131,9 @@ class ContactView extends Component {
 	}
 
 	_getContactFreqPicker() {
-		let freqNums = [];
+		let frequencyNumbers = [];
 		for (let i = 1; i <= 30; i++)
-			freqNums.push(<Picker.Item key={i} label={i.toString()} value={i.toString()} />);
+			frequencyNumbers.push(<Picker.Item key={i} label={i.toString()} value={i.toString()} />);
 
 		return (
 			<View>
@@ -142,15 +142,13 @@ class ContactView extends Component {
 					<Picker
 						onValueChange={this._onContactFreqNumUpdate}
 						style={styles.halfPicker}
-						selectedValue={this.state.freqNum.toString()}
-					>
-						{freqNums}
+						selectedValue={this.state.freqNum.toString()}>
+						{frequencyNumbers}
 					</Picker>
 					<Picker
 						onValueChange={this._onContactFreqUnitUpdate}
 						style={styles.halfPicker}
-						selectedValue={this.state.freqUnit}
-					>
+						selectedValue={this.state.freqUnit}	>
 						<Picker.Item label="days" value="days" />
 						<Picker.Item label="weeks" value="weeks" />
 						<Picker.Item label="months" value="months" />
@@ -334,7 +332,7 @@ const styles = StyleSheet.create({
 const mapStateToProps = () => ({});
 
 const mapDispatchToProps = (dispatch) => ({
-	setContactPriority: (cid, p) => dispatch(setContactPriority(cid, p)),
+	setContactPriority: (c, p) => dispatch(setContactPriority(c, p)),
 	updateContact: (c) => dispatch(updateContact(c)),
 	removeContact: (c) => dispatch(removeContact(c)),
 });

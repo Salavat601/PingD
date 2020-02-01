@@ -16,23 +16,21 @@ import PingCard from '../generic/PingCard';
 class PingList extends Component {
 	constructor(props) {
 		super(props);
-
-		this._comparePingCards = this._comparePingCards.bind(this);
 	}
 
-	_comparePingCards(c1, c2) {
-		if (c1.contact.nextContact < c2.contact.nextContact)
+	comparePingCards(c1, c2) {
+		if (c1.nextContact < c2.nextContact)
 			return -1;
-		else if (c1.contact.nextContact > c2.contact.nextContact)
+		else if (c1.nextContact > c2.nextContact)
 			return 1;
-		else if (c1.contact.lastName < c2.contact.lastName)
+		else if (c1.lastName < c2.lastName)
 			return -1;
-		else if (c1.contact.lastName > c2.contact.lastName)
+		else if (c1.lastName > c2.lastName)
 			return 1;
 		else {
-			if (c1.contact.firstName < c2.contact.firstName)
+			if (c1.firstName < c2.firstName)
 				return -1;
-			else if (c1.contact.firstName > c2.contact.firstName)
+			else if (c1.firstName > c2.firstName)
 				return 1;
 		}
 
@@ -55,8 +53,8 @@ class PingList extends Component {
 					this.props.contacts
 						?
 						<FlatList
-							data={this.props.contacts.sort((c1, c2) => this._comparePingCards(c1, c2))}
-							renderItem={(c) => <PingCard contact={c.item.contact} />}
+							data={this.props.contacts.sort((c1, c2) => this.comparePingCards(c1, c2))}
+							renderItem={({ item }) => <PingCard contact={item} />}
 						/>
 						: <Text>no</Text>
 				}
@@ -92,7 +90,7 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => {
 	return {
-		contacts: state.contacts,
+		contacts: state.contacts.contacts,
 	};
 };
 

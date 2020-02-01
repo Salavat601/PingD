@@ -19,8 +19,7 @@ import AppBar from '../generic/AppBar';
 import ContactSeparator from '../generic/ContactSeparator';
 import OnboardingContactCard from '../OnboardingContactsPage/OnboardingContactCard';
 import Theme from '../Theme';
-import PlatformManager from '../../helpers/platformManager';
-import ContactManager, { Contact } from '../../api/models/contactManager'
+import ContactManager, { Contact, sortContacts } from '../../api/models/contactManager'
 
 const ContinueButton = props => (
 	<TouchableOpacity
@@ -70,27 +69,16 @@ const buttonStyles = StyleSheet.create({
 	},
 });
 
-function compareContacts(c1, c2) {
-	if (c1.familyName < c2.familyName) return -1;
-	else if (c1.familyName > c2.familyName) return 1;
-	else {
-		if (c1.givenName < c2.givenName) return -1;
-		else if (c1.givenName > c2.givenName) return 1;
-	}
 
-	return 0;
-}
 
 class AddContactsPage extends Component {
 	constructor(props) {
 		super(props);
 
-		var numbers = Object.entries(this.props.contacts).map(([key, value]) => {
-			return value.contact.phoneNumber;
-		});
+		const savedNumbers = this.props.contacts.map((item, index) => { return item.phoneNumber })
 
 		this.state = {
-			savedNumbers: numbers,
+			savedNumbers: savedNumbers,
 			contacts: [],
 			searchResult: [],
 			search: '',
@@ -104,31 +92,29 @@ class AddContactsPage extends Component {
 	}
 
 	searchContacts(search) {
-		const { contacts } = this.state;
-		searchResult = contacts.filter(function (contact) {
+		const { contacts, savedNumbers } = this.state;
+		const searchResult = contacts.filter(function (contact) {
+			if (savedNumbers.indexOf(contact.phoneNumber) !== -1) {
+				return false
+			}
+
 			if (!search || search == '') {
 				return true;
 			}
 
-			if (contact.givenName && contact.givenName.toLowerCase().indexOf(search.toLowerCase()) != -1) {
+			if (contact.firstName.toLowerCase().indexOf(search.toLowerCase()) != -1) {
 				console.log('Given Name is Matched.');
 				return true;
 			}
 
-			if (contact.familyName && contact.familyName.toLowerCase().indexOf(search.toLowerCase()) != -1) {
+			if (contact.lastName.toLowerCase().indexOf(search.toLowerCase()) != -1) {
 				console.log('Family Name is Matched.');
 				return true;
 			}
 
-			if (contact.phoneNumbers) {
-				for (let i = 0; i < contact.phoneNumbers.length; i++) {
-					if (contact.phoneNumbers[i].number.indexOf(search) != -1) {
-						return true;
-					}
-				}
+			if (contact.phoneNumber && contact.phoneNumber.indexOf(search) != -1) {
+				return true
 			}
-
-			// console.log("%s,%s,%s", search, contact.givenName, contact.familyName);
 
 			return false;
 		});
@@ -143,44 +129,27 @@ class AddContactsPage extends Component {
 		this.searchContacts(search);
 	};
 
-	onContactsFetched(err, contacts) {
+	onContactsFetched(err, contactInfos) {
 		if (err) {
 			console.log(err);
 			return;
 		}
 
-		const savedContacts = this.props.contacts
-		let savedNumbers = []
-		for (let i = 0; i < savedContacts.length; i++) {
-			const contact = savedContacts[i].contact
-			savedNumbers.push(contact.phoneNumber)
-		}
-		console.log("Saved Numbers: ", savedNumbers)
-
-		if (!contacts) {
+		if (!contactInfos) {
 			console.log('Contacts is empty.');
 			return;
 		}
 
-		contacts = contacts.filter(function (contact) {
-			// system contact
-			if (contact.givenName.startsWith('#')) return false;
-			// filter no-name contacts
-			if (contact.givenName === '' && contact.familyName === '') return false;
-			// Check if number is already in an imported contact
-
-			if (contact.phoneNumbers.length > 0 && savedNumbers !== undefined) {
-				const phoneNumber = contact.phoneNumbers[0].number
-				if (savedNumbers.indexOf(phoneNumber) != -1) {
-					console.log("Found Saved Number: ", phoneNumber)
-					return false
-				}
+		const { savedNumbers } = this.state
+		let contacts = []
+		for (let i = 0; i < contactInfos.length; i++) {
+			const contact = new Contact({ info: contactInfos[i] })
+			if (!contact.firstName.startsWith('#') && !(contact.firstName === '' && contact.lastName === '')) {
+				contacts.push(contact)
 			}
+		}
 
-			return true;
-		});
-
-		this.setState({ contacts: contacts.sort(compareContacts) });
+		this.setState({ contacts: contacts.sort(sortContacts) });
 		this.searchContacts(this.state.search);
 	}
 
@@ -203,43 +172,40 @@ class AddContactsPage extends Component {
 	}
 
 	renderContactCard(contact) {
-		if (contact.item.isSeparator)
-			return <ContactSeparator letter={contact.item.letter} />;
-
-		let first = contact.item.givenName ? contact.item.givenName : '';
-		let last = contact.item.familyName ? contact.item.familyName : '';
-		let phone;
-		if (!contact.item.phoneNumbers.length || !contact.item.phoneNumbers[0])
-			phone = '';
-		else
-			phone = contact.item.phoneNumbers[0].number;
+		if (contact.isSeparator)
+			return <ContactSeparator letter={contact.letter} />;
 
 		return (
 			<OnboardingContactCard
-				contactID={contact.item.recordID}
-				firstName={first}
-				lastName={last}
-				phoneNumber={phone}
-				thumbnail={contact.item.thumbnailPath}
+				contact={contact}
 			/>
 		);
 	}
 
 	addContactSeparators(contacts) {
-		let processed = [];
+		let results = [];
 		let lastInitial = null;
 
-		for (var i = 0; i < contacts.length; i++) {
-			let initial = (contacts[i].familyName === String) ? contacts[i].familyName.substring(0, 1) : null;
+		if (!contacts) {
+			return results;
+		}
+
+		for (let i = 0; i < contacts.length; i++) {
+			const contact = contacts[i]
+			if (!contact) {
+				continue
+			}
+
+			let initial = contacts[i].lastName.length > 0 ? contacts[i].lastName.substring(0, 1) : "";
 			if (initial != lastInitial) {
-				processed.push({ isSeparator: true, letter: initial });
+				results.push({ isSeparator: true, letter: initial });
 				lastInitial = initial;
 			}
 
-			processed.push(contacts[i]);
+			results.push(contacts[i]);
 		}
 
-		return processed;
+		return results;
 	}
 
 	_startApp() {
@@ -249,13 +215,13 @@ class AddContactsPage extends Component {
 	render() {
 		let contactList = null;
 		const { search } = this.state;
-		if (this.state.contacts.length > 0)
+		if (this.state.searchResult.length > 0)
 			contactList = (
 				<FlatList
 					contentContainerStyle={styles.contactList}
 					data={this.addContactSeparators(this.state.searchResult)}
 					keyExtractor={(item, index) => index.toString()}
-					renderItem={this.renderContactCard}
+					renderItem={({ item }) => this.renderContactCard(item)}
 				/>
 			);
 
@@ -301,7 +267,7 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = state => {
 	return {
-		contacts: state.contacts,
+		contacts: state.contacts.contacts,
 	};
 };
 

@@ -8,13 +8,14 @@ import * as appActions from '../api/redux/actions/appActions/changeRoot';
 import { registerScreens } from './screens';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 import Theme from '../components/Theme';
-import PlatformManager from '../helpers/platformManager';
+import { isIOS, isAndroid } from '../helpers/platformManager';
 import NotificationsIOS, { NotificationsAndroid } from 'react-native-notifications';
+import detectFirstLaunch from '../utils/detectFirstLaunch'
 
 const storage = configureStore();
 registerScreens(storage.store, Provider);
 
-export default class App extends Component {
+class App extends Component {
 	constructor(props) {
 		super(props);
 
@@ -25,11 +26,11 @@ export default class App extends Component {
 	}
 
 	componentDidMount() {
-		if (PlatformManager.isIOS) {
+		if (isIOS) {
 			NotificationsIOS.requestPermissions();
 		}
 		/* Android */
-		if (PlatformManager.isAndroid) {
+		if (isAndroid) {
 			NotificationsAndroid.setRegistrationTokenUpdateListener(this.onPushRegistered);
 		}
 	}
@@ -48,52 +49,108 @@ export default class App extends Component {
 	}
 
 	startApp(root) {
-
-
-
 		switch (root) {
 			case 'app': {
-				Navigation.setRoot({
-					root: {
-						bottomTabs: {
-							children: [{
-								component: {
-									name: 'PingD.Contacts',
-									options: {
-										bottomTab: { text: 'Contacts', icon: require('../assets/contacts_unselected.png'), selectedIcon: require('../assets/contacts_selected.png'), },
-										topBar: { visible: false, animate: false, }
-									}
+				if (isIOS) {
+					Navigation.events().registerAppLaunchedListener(() => {
+						Navigation.setDefaultOptions({
+							bottomTabs: { backgroundColor: 'white', barStyle: 'default', translucent: false, },
+							bottomTab: { selectedTextColor: Theme.Blue, },
+						});
+
+						Navigation.setRoot({
+							root: {
+								bottomTabs: {
+									children: [{
+										component: {
+											name: 'PingD.Contacts',
+											options: {
+												bottomTab: { text: 'Contacts', icon: require('../assets/contacts_unselected.png'), selectedIcon: require('../assets/contacts_selected.png'), },
+												topBar: { visible: false, animate: false, }
+											}
+										}
+									}, {
+										component: {
+											name: 'PingD.PingList',
+											options: {
+												bottomTab: { text: 'Ping List', icon: require('../assets/ping_list_unselected.png'), selectedIcon: require('../assets/ping_list_selected.png'), },
+												topBar: { visible: false, animate: false, }
+											}
+										}
+									}, {
+										component: {
+											name: 'PingD.Calendar',
+											options: {
+												bottomTab: { text: 'Calendar', icon: require('../assets/calendar_unselected.png'), selectedIcon: require('../assets/calendar_selected.png'), },
+												topBar: { visible: false, animate: false, }
+											}
+										}
+									},]
 								}
-							}, {
-								component: {
-									name: 'PingD.PingList',
-									options: {
-										bottomTab: { text: 'Ping List', icon: require('../assets/ping_list_unselected.png'), selectedIcon: require('../assets/ping_list_selected.png'), },
-										topBar: { visible: false, animate: false, }
+							}
+						});
+					})
+				} else {
+					Navigation.setRoot({
+						root: {
+							bottomTabs: {
+								children: [{
+									component: {
+										name: 'PingD.Contacts',
+										options: {
+											bottomTab: { text: 'Contacts', icon: require('../assets/contacts_unselected.png'), selectedIcon: require('../assets/contacts_selected.png'), },
+											topBar: { visible: false, animate: false, }
+										}
 									}
-								}
-							}, {
-								component: {
-									name: 'PingD.Calendar',
-									options: {
-										bottomTab: { text: 'Calendar', icon: require('../assets/calendar_unselected.png'), selectedIcon: require('../assets/calendar_selected.png'), },
-										topBar: { visible: false, animate: false, }
+								}, {
+									component: {
+										name: 'PingD.PingList',
+										options: {
+											bottomTab: { text: 'Ping List', icon: require('../assets/ping_list_unselected.png'), selectedIcon: require('../assets/ping_list_selected.png'), },
+											topBar: { visible: false, animate: false, }
+										}
 									}
-								}
-							},]
+								}, {
+									component: {
+										name: 'PingD.Calendar',
+										options: {
+											bottomTab: { text: 'Calendar', icon: require('../assets/calendar_unselected.png'), selectedIcon: require('../assets/calendar_selected.png'), },
+											topBar: { visible: false, animate: false, }
+										}
+									}
+								},]
+							}
 						}
-					}
-				});
+					});
+				}
 				return;
 			}
 
 			case 'login': {
-				Navigation.events().registerAppLaunchedListener(() => {
-					Navigation.setDefaultOptions({
-						bottomTabs: { backgroundColor: 'white', barStyle: 'default', translucent: false, },
-						bottomTab: { selectedTextColor: Theme.Blue, },
-					});
+				if (isIOS) {
+					Navigation.events().registerAppLaunchedListener(() => {
+						Navigation.setDefaultOptions({
+							bottomTabs: { backgroundColor: 'white', barStyle: 'default', translucent: false, },
+							bottomTab: { selectedTextColor: Theme.Blue, },
+						});
 
+						Navigation.setRoot({
+							root: {
+								stack: {
+									children: [{
+										component: {
+											name: 'PingD.Onboarding',
+											options: {
+												topBar: { visible: false, animate: false, }
+											},
+											passProps: { text: 'stack with one child' },
+										}
+									}],
+								}
+							}
+						});
+					})
+				} else {
 					Navigation.setRoot({
 						root: {
 							stack: {
@@ -109,7 +166,8 @@ export default class App extends Component {
 							}
 						}
 					});
-				})
+				}
+
 				return;
 			}
 
@@ -162,3 +220,15 @@ export default class App extends Component {
 		}
 	}
 }
+
+const mapStateToProps = () => {
+	return {};
+};
+
+const mapDispatchToProps = (dispatch) => {
+	return {
+		startAppImporting: () => dispatch(appActions.login()),
+	};
+};
+
+export default App;

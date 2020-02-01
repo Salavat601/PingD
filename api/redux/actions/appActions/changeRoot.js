@@ -1,3 +1,4 @@
+import detectFirstLaunch from '../../../../utils/detectFirstLaunch'
 export const ROOT_CHANGED = 'ROOT_CHANGED';
 
 /**
@@ -6,10 +7,10 @@ export const ROOT_CHANGED = 'ROOT_CHANGED';
  * @return {changeAppRootAction}
  */
 export function changeAppRoot(root) {
-  return {
-    type: ROOT_CHANGED,
-    root,
-  };
+	return {
+		type: ROOT_CHANGED,
+		root,
+	};
 }
 
 /*
@@ -17,36 +18,39 @@ export function changeAppRoot(root) {
  * screens should appear.
  */
 export function appInitialized() {
-    return async function(dispatch) {
-        /*
-         * App initialization code here
-         */
-        dispatch(changeAppRoot('login'));
-    };
+	return async function (dispatch) {
+		/*
+		 * App initialization code here
+		 */
+		detectFirstLaunch().then(value => {
+			dispatch(changeAppRoot(value ? 'login' : 'importing'));
+		})
+
+	};
 }
 
 /*
  * Transition from onboarding to importing contacts.
  */
 export function login() {
-    return async function(dispatch) {
-        /*
-         * Any login logic will go here
-         */
-        dispatch(changeAppRoot('importing'));
-    };
+	return async function (dispatch) {
+		/*
+		 * Any login logic will go here
+		 */
+		dispatch(changeAppRoot('importing'));
+	};
 }
 
 /*
  * Adding New Contacts
  */
 export function addNew() {
-    return async function(dispatch) {
-        /*
-         * Any login logic will go here
-         */
-        dispatch(changeAppRoot('addNew'));
-    };
+	return async function (dispatch) {
+		/*
+		 * Any login logic will go here
+		 */
+		dispatch(changeAppRoot('addNew'));
+	};
 }
 
 /*
@@ -54,7 +58,7 @@ export function addNew() {
  * the main app should now be displayed.
  */
 export function contactsDoneImporting() {
-    return async function(dispatch) {
-        dispatch(changeAppRoot('app'));
-    };
+	return async function (dispatch) {
+		dispatch(changeAppRoot('app'));
+	};
 }

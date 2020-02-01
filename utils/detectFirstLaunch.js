@@ -19,9 +19,9 @@ export default async function detectFirstLaunch() {
         const hasLaunched = await AsyncStorage.getItem(HAS_LAUNCHED);
         if (hasLaunched === null) {
             setLaunched();
-            return false;
-        } else {
             return true;
+        } else {
+            return false;
         }
     } catch (error) {
         return false;

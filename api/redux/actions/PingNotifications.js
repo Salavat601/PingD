@@ -3,6 +3,7 @@ import { Notifications } from 'react-native-notifications';
 import ContactManager, { Contact } from '../../models/contactManager';
 import moment from 'moment';
 import PushNotification from 'react-native-push-notification';
+import { isIOS, isAndroid } from '../../../helpers/platformManager';
 
 function phoneNumber(contact) {
 	if (!contact || !contact.phoneNumber)
@@ -16,7 +17,8 @@ function phoneNumberToID(phoneNumber) {
 	}
 
 	let id = phoneNumber.replace(/\D/g, '')
-	if (id.length > 10) { id = id.substring(0, 10) }
+	const maxLength = isIOS ? 10 : 5
+	if (id.length > maxLength) { id = id.substring(0, maxLength) }
 	return id;
 }
 

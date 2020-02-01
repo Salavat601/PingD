@@ -13,7 +13,7 @@ import setContactPriority from '../../api/redux/actions/setContactPriority';
 import BucketSelector from './BucketSelector';
 import ContactCard from '../generic/ContactCard';
 import { ContactFreqs } from '../ContactUtils';
-import ContactManager, { Contact } from '../../api/models/contactManager'
+import ContactManager, { Contact, ContactPriority } from '../../api/models/contactManager'
 import Theme from '../Theme';
 
 
@@ -22,9 +22,7 @@ class OnboardingContactCard extends Component {
 		super(props);
 
 		this.state = {
-			contact: {},
 			expanded: false,
-			priority: -1,
 		};
 
 		this.expand = this.expand.bind(this);
@@ -48,46 +46,26 @@ class OnboardingContactCard extends Component {
 	}
 
 	setPriority(priority) {
+		if (priority === ContactPriority.Remove.rawValue)
+			return
 		// selecting the same priority removes the contact
-		if (priority === this.state.priority) {
-			this.props.removeContact(this.state.contact.contactID);
-			this.setState({
-				contact: {},
-				priority: -1,
-			});
-			// selecting a new priority updates the contact
-		} else if (this.state.priority >= 0) {
-			let newContact = this.state.contact;
-			newContact.priority = priority;
+		if (priority === this.props.contact.priority) {
+			this.props.contact.setPriority(ContactPriority.Remove.rawValue)
+			this.props.removeContact(this.props.contact);
+			return
+		}
 
-			this.props.setContactPriority(this.state.contact.contactID, priority);
-			this.setState({
-				contact: newContact,
-				priority: priority,
-			});
+		// add contact
+		if (this.props.contact.priority === ContactPriority.Remove.rawValue) {
+			this.props.contact.setPriority(priority)
+			this.props.addContact(this.props.contact)
 		} else {
-			const contact = new Contact({
-				contactID: this.props.contactID,
-				firstName: this.props.firstName,
-				lastName: this.props.lastName,
-				phoneNumber: this.props.phoneNumber,
-				thumbnail: this.props.thumbnail,
-				priority: priority,
-				contactFrequency: ContactFreqs[priority],
-				contactMethod: 'contact',
-				lastContact: 0,
-				notes: '',
-			});
-			this.props.addContact(contact);
-
-			this.setState({
-				contact: contact,
-				priority: priority,
-			});
+			this.props.contact.setPriority(priority)
+			this.props.setContactPriority(this.props.contact, priority);
 		}
 	}
 
-	_getBorderStyle() {
+	getBorderStyle() {
 		let style = {
 			borderColor: '',
 			borderWidth: 4,
@@ -95,16 +73,16 @@ class OnboardingContactCard extends Component {
 			shadowOpacity: 0.3,
 		};
 
-		if (this.state.priority >= 0)
+		if (this.props.contact.priority >= ContactPriority.Remove.rawValue)
 			style.shadowOpacity = 0.8;
 
-		if (this.state.priority === 0) {
+		if (this.props.contact.priority === ContactPriority.Friend.rawValue) {
 			style.borderColor = Theme.Green;
 			style.shadowColor = Theme.Green;
-		} else if (this.state.priority === 1) {
+		} else if (this.props.contact.priority === ContactPriority.Acquaintance.rawValue) {
 			style.borderColor = Theme.Blue;
 			style.shadowColor = Theme.Blue;
-		} else if (this.state.priority === 2) {
+		} else if (this.props.contact.priority === ContactPriority.TouchPoint.rawValue) {
 			style.borderColor = Theme.Purple;
 			style.shadowColor = Theme.Purple;
 		}
@@ -113,26 +91,21 @@ class OnboardingContactCard extends Component {
 	}
 
 	render() {
-		let name;
-		if (this.props.firstName !== '')
-			name = `${this.props.firstName} ${this.props.lastName}`;
-		else
-			name = this.props.lastName;
-
-		let phoneNumber = this.props.phoneNumber;  // TODO: format?
+		let name = `${this.props.contact.firstName} ${this.props.contact.lastName}`.trim()
+		let phoneNumber = this.props.contact.phoneNumber
 
 		let cardStyle = [styles.card];
-		if (this.state.priority >= 0)
-			cardStyle.push(this._getBorderStyle());
+		if (this.props.contact.priority > ContactPriority.Remove.rawValue)
+			cardStyle.push(this.getBorderStyle());
 
 		let selector = null;
 		if (this.state.expanded)
 			selector = (
 				<BucketSelector
 					style={cardStyle}
-					priority={this.state.priority}
+					priority={this.props.contact.priority}
 					expand={this.expand}
-					setPriority={this.setPriority}
+					setPriority={(priority) => { this.setPriority(priority) }}
 				/>
 			);
 
@@ -142,7 +115,7 @@ class OnboardingContactCard extends Component {
 					style={cardStyle}
 					name={name}
 					phoneNumber={phoneNumber}
-					thumbnail={this.props.thumbnail}>
+					thumbnail={this.props.contact.thumbnail}>
 					{selector}
 				</ContactCard>
 			</TouchableOpacity>
@@ -151,11 +124,7 @@ class OnboardingContactCard extends Component {
 }
 
 OnboardingContactCard.propTypes = {
-	contactID: PropTypes.string.isRequired,
-	firstName: PropTypes.string.isRequired,
-	lastName: PropTypes.string.isRequired,
-	phoneNumber: PropTypes.string.isRequired,
-	thumbnail: PropTypes.string.isRequired,
+	contact: PropTypes.objectOf(Contact).isRequired,
 	// Redux actions
 	addContact: PropTypes.func.isRequired,
 	removeContact: PropTypes.func.isRequired,
@@ -179,8 +148,8 @@ const mapStateToProps = () => ({});
 
 const mapDispatchToProps = (dispatch) => ({
 	addContact: (c) => dispatch(addContact(c)),
-	removeContact: (cid) => dispatch(removeContact(cid)),
-	setContactPriority: (cid, p) => dispatch(setContactPriority(cid, p)),
+	removeContact: (c) => dispatch(removeContact(c)),
+	setContactPriority: (c, p) => dispatch(setContactPriority(c, p)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(OnboardingContactCard);

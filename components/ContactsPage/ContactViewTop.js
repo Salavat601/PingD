@@ -41,14 +41,14 @@ const ContactViewTop = (props) => {
         backgroundColor: getColorFaded(props.priority),
     };
 
-    let contactImg = {uri: props.image};
+    let contactImg = { uri: props.image };
     if (!props.image)
         contactImg = require('../../assets/contact.png');
 
     return (
         <View style={styles.topContainer}>
             <View style={styles.topMain}>
-                <CloseButton close={props.reset}/>
+                <CloseButton close={props.reset} />
                 <Image
                     style={styles.image}
                     source={contactImg}
@@ -64,7 +64,7 @@ const ContactViewTop = (props) => {
                     </TouchableOpacity>
                 </View>
             </View>
-            <View style={[styles.topHighlight, highlightStyle]}/>
+            <View style={[styles.topHighlight, highlightStyle]} />
         </View>
     );
 };
@@ -80,20 +80,20 @@ ContactViewTop.propTypes = {
 const styles = StyleSheet.create({
     closeButtonWrapper: {
         position: 'absolute',
-        top: 30,
-        right: 10,
+        top: 40,
+        right: 20,
     },
     closeButton: {
         position: 'relative',
         resizeMode: 'contain',
-        width: 20,
-        height: 20,
+        width: 30,
+        height: 30,
         borderRadius: 10,
     },
     topContainer: {
         shadowColor: Theme.DarkBlue,
         shadowOpacity: 0.2,
-        shadowOffset: {width: 0, height: 3},
+        shadowOffset: { width: 0, height: 3 },
         shadowRadius: 6,
     },
     topMain: {

@@ -20,7 +20,7 @@ import AppBar from '../generic/AppBar';
 import ContactSeparator from '../generic/ContactSeparator';
 import OnboardingContactCard from './OnboardingContactCard';
 import Theme from '../Theme';
-import ContactManager, { Contact } from '../../api/models/contactManager'
+import ContactManager, { Contact, sortContacts } from '../../api/models/contactManager'
 
 
 const ContinueButton = (props) => (
@@ -71,33 +71,6 @@ const buttonStyles = StyleSheet.create({
 	},
 });
 
-
-function sortContacts(contact1, contact2) {
-	if (contact1.familyName < contact2.familyName)
-		return -1;
-	else if (contact1.familyName > contact2.familyName)
-		return 1;
-	else {
-		if (contact1.givenName < contact2.givenName)
-			return -1;
-		else if (contact1.givenName > contact2.givenName)
-			return 1;
-	}
-
-	return 0;
-}
-
-function filterContacts(contact) {
-	// system contact
-	if (contact.givenName.startsWith('#'))
-		return false;
-	// filter no-name contacts
-	if (contact.givenName === '' && contact.familyName === '')
-		return false;
-	return true;
-}
-
-
 class OnboardingContactsPage extends Component {
 	constructor(props) {
 		super(props);
@@ -109,24 +82,31 @@ class OnboardingContactsPage extends Component {
 		};
 
 		this._getContacts = this._getContacts.bind(this);
-		this._renderContactCard = this._renderContactCard.bind(this);
+		this.renderContactCard = this.renderContactCard.bind(this);
 		this._startApp = this._startApp.bind(this);
 
 		this._getContacts();
 	}
 
-	onContactsFetched(err, contacts) {
+	onContactsFetched(err, contactInfos) {
 		if (err) {
 			console.log(err);
 			return;
 		}
 
-		if (!contacts) {
+		if (!contactInfos) {
 			console.log("Contacts is empty.");
 			return;
 		}
 
-		contacts = contacts.filter(filterContacts);
+		let contacts = []
+		for (let i = 0; i < contactInfos.length; i++) {
+			const contact = new Contact({ info: contactInfos[i] })
+			if (!contact.firstName.startsWith('#') && !(contact.firstName === '' && contact.lastName === '')) {
+				contacts.push(contact)
+			}
+		}
+
 		this.setState({ contacts: contacts.sort(sortContacts) });
 		this.searchContacts("")
 	}
@@ -149,46 +129,37 @@ class OnboardingContactsPage extends Component {
 		}
 	}
 
-	_renderContactCard(contact) {
-		if (contact.item.isSeparator)
-			return <ContactSeparator letter={contact.item.letter} />;
-
-		let first = contact.item.givenName ? contact.item.givenName : '';
-		let last = contact.item.familyName ? contact.item.familyName : '';
-		let phone;
-		if (!contact.item.phoneNumbers.length || !contact.item.phoneNumbers[0])
-			phone = '';
-		else
-			phone = contact.item.phoneNumbers[0].number;
+	renderContactCard(contact) {
+		if (contact.isSeparator) {
+			return <ContactSeparator letter={contact.letter} />
+		}
 
 		return (
 			<OnboardingContactCard
-				contactID={contact.item.recordID}
-				firstName={first} lastName={last}
-				phoneNumber={phone}
-				thumbnail={contact.item.thumbnailPath} />
+				contact={contact}
+			/>
 		);
 	}
 
-	_addContactSeparators(contacts) {
-		let processed = [];
+	addContactSeparators(contacts) {
+		let results = [];
 		let lastInitial = null;
 
 		if (!contacts) {
-			return processed;
+			return results;
 		}
 
 		for (let i = 0; i < contacts.length; i++) {
-			let initial = contacts[i].familyName ? contacts[i].familyName[0] : "";
+			let initial = contacts[i].lastName.length > 0 ? contacts[i].lastName.substring(0, 1) : "";
 			if (initial != lastInitial) {
-				processed.push({ isSeparator: true, letter: initial });
+				results.push({ isSeparator: true, letter: initial });
 				lastInitial = initial;
 			}
 
-			processed.push(contacts[i]);
+			results.push(contacts[i]);
 		}
 
-		return processed;
+		return results;
 	}
 
 	_startApp() {
@@ -201,30 +172,24 @@ class OnboardingContactsPage extends Component {
 
 	searchContacts(search) {
 		const { contacts } = this.state;
-		searchResult = contacts.filter(function (contact) {
+		const searchResult = contacts.filter(function (contact) {
 			if (!search || search == '') {
 				return true;
 			}
 
-			if (contact.givenName && contact.givenName.toLowerCase().indexOf(search.toLowerCase()) != -1) {
+			if (contact.firstName && contact.firstName.toLowerCase().indexOf(search.toLowerCase()) != -1) {
 				console.log('Given Name is Matched.');
 				return true;
 			}
 
-			if (contact.familyName && contact.familyName.toLowerCase().indexOf(search.toLowerCase()) != -1) {
+			if (contact.lastName && contact.lastName.toLowerCase().indexOf(search.toLowerCase()) != -1) {
 				console.log('Family Name is Matched.');
 				return true;
 			}
 
-			if (contact.phoneNumbers) {
-				for (let i = 0; i < contact.phoneNumbers.length; i++) {
-					if (contact.phoneNumbers[i].number.indexOf(search) != -1) {
-						return true;
-					}
-				}
+			if (contact.phoneNumber && contact.phoneNumber.indexOf(search) != -1) {
+				return true
 			}
-
-			// console.log("%s,%s,%s", search, contact.givenName, contact.familyName);
 
 			return false;
 		});
@@ -241,9 +206,9 @@ class OnboardingContactsPage extends Component {
 			contactList = (
 				<FlatList
 					contentContainerStyle={styles.contactList}
-					data={this._addContactSeparators(this.state.searchResult)}
+					data={this.addContactSeparators(this.state.searchResult)}
 					keyExtractor={(item, index) => index.toString()}
-					renderItem={this._renderContactCard}
+					renderItem={({ item }) => this.renderContactCard(item)}
 				/>
 			);
 
