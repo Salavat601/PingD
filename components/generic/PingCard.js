@@ -152,7 +152,6 @@ class PingCard extends Component {
 		var newPingDate = new Date(toc);
 		updatedContact.nextContact = newPingDate;
 
-
 		this.props.updateContact(updatedContact);
 	}
 

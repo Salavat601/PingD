@@ -12,8 +12,7 @@ import setContactPriority from '../../api/redux/actions/setContactPriority';
 
 import BucketSelector from './BucketSelector';
 import ContactCard from '../generic/ContactCard';
-import { ContactFreqs } from '../ContactUtils';
-import ContactManager, { Contact, ContactPriority } from '../../api/models/contactManager'
+import ContactManager, { Contact, ContactPriority, ContactFrequency } from '../../api/models/contactManager'
 import Theme from '../Theme';
 
 
@@ -124,7 +123,7 @@ class OnboardingContactCard extends Component {
 }
 
 OnboardingContactCard.propTypes = {
-	contact: PropTypes.objectOf(Contact).isRequired,
+	contact: PropTypes.objectOf(Contact),
 	// Redux actions
 	addContact: PropTypes.func.isRequired,
 	removeContact: PropTypes.func.isRequired,
