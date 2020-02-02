@@ -135,9 +135,7 @@ class OnboardingContactsPage extends Component {
 		}
 
 		return (
-			<OnboardingContactCard
-				contact={contact}
-			/>
+			<OnboardingContactCard contact={contact} />
 		);
 	}
 

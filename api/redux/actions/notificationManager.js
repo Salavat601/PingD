@@ -1,9 +1,9 @@
 import React from 'react';
-import {Notifications} from 'react-native-notifications';
-import ContactManager, {Contact} from '../../models/contactManager';
+import { Notifications } from 'react-native-notifications';
+import ContactManager, { Contact } from '../../models/contactManager';
 import moment from 'moment';
 import PushNotification from 'react-native-push-notification';
-import {isIOS, isAndroid} from '../../../helpers/platformManager';
+import { isIOS, isAndroid } from '../../../helpers/platformManager';
 
 function phoneNumber(contact) {
   if (!contact || !contact.phoneNumber) return '0';
@@ -65,7 +65,7 @@ export function cancel(contact) {
   if (!contact || !contact.phoneNumber) return;
 
   var id = notificationId(contact);
-  PushNotification.cancelLocalNotifications({id: id});
+  PushNotification.cancelLocalNotifications({ id: id });
   return;
 }
 export function update(contact) {

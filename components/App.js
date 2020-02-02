@@ -9,7 +9,7 @@ import { registerScreens } from './screens';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 import Theme from '../components/Theme';
 import { isIOS, isAndroid } from '../helpers/platformManager';
-import NotificationsIOS, { NotificationsAndroid } from 'react-native-notifications';
+import { Notifications } from 'react-native-notifications';
 import detectFirstLaunch from '../utils/detectFirstLaunch'
 
 const storage = configureStore();
@@ -19,20 +19,20 @@ class App extends Component {
 	constructor(props) {
 		super(props);
 
+		Notifications.registerRemoteNotifications();
+
+		Notifications.events().registerNotificationReceivedForeground((notification, completion) => {
+			completion({ alert: false, sound: false, badge: false });
+		});
+
+		Notifications.events().registerNotificationOpened((notification, completion) => {
+			completion();
+		});
+
 		// NOTE: uncomment following line to purge state of app and run app once
 		storage.persistor.purge();
 		storage.store.subscribe(this.onStoreUpdate.bind(this));
 		storage.store.dispatch(appActions.appInitialized());
-	}
-
-	componentDidMount() {
-		if (isIOS) {
-			NotificationsIOS.requestPermissions();
-		}
-		/* Android */
-		if (isAndroid) {
-			NotificationsAndroid.setRegistrationTokenUpdateListener(this.onPushRegistered);
-		}
 	}
 
 	onPushRegistered = async deviceToken => {
