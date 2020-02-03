@@ -15,6 +15,7 @@ import Communications from 'react-native-communications';
 import Theme from '../Theme';
 import { ContactFreqs, SnoozeFreqs } from '../ContactUtils';
 import Swipeable from 'react-native-swipeable-row';
+import {Contact} from '../../api/models/contactManager'
 
 
 class PingCard extends Component {
@@ -31,7 +32,7 @@ class PingCard extends Component {
 
 	sendText() {
 		swipeable = null;
-		const phoneNumber = this.props.contact.phoneNumberCleaned()
+		const phoneNumber = Contact.phoneNumberCleaned(this.props.contact);
 		Communications.text(phoneNumber,
 			`Hey ${this.props.contact.firstName}! It's been a while, would love to catch up`);
 		console.log('texted');

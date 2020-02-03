@@ -5,6 +5,7 @@ import {REMOVE_CONTACT} from '../actions/removeContact';
 import {SET_CONTACT_PRIORITY} from '../actions/setContactPriority';
 import {UPDATE_CONTACT} from '../actions/updateContact';
 import * as NotificationManager from '../actions/notificationManager';
+import { Contact } from '../../models/contactManager';
 
 const initialState = {
   contacts: [],
@@ -36,7 +37,7 @@ export default function contacts(contactsState = initialState, action) {
 
       for (let i = 0; i < newState.contacts.length; i++) {
         if (newState.contacts[i].contactId === contact.contactId) {
-          newState.contacts[i].setPriority(priority);
+			Contact.setPriority(newState.contacts[i], priority);
           NotificationManager.update(newState.contacts[i]);
           break;
         }

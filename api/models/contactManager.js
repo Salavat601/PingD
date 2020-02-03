@@ -83,6 +83,31 @@ export class Contact {
 	static fullName = (contact) => {
 		return `${contact.firstName} ${contact.lastName}`.trim();
 	  };
+
+	  static setPriority(contact, priority) {
+		contact.priority = priority;
+		if (contact.priority !== ContactPriority.Remove.rawValue) {
+			contact.contactFrequency = ContactFrequency[priority];
+			contact.nextContact = Contact.initialContactTime(priority);
+		}
+	  }
+	
+	  static initialContactTime = priority => {
+		let freq = ContactFrequency[priority];
+		let start = Math.floor(freq / 2);
+	
+		let rand = Math.floor(Math.random() * freq) - start;
+		let days = start + rand + 1;
+	
+		let today = Math.round(new Date().getTime());
+		let toc = today + days * 24 * 60 * 60 * 1000;
+		const result = new Date(toc);
+		return result;
+	  };
+	
+	  static phoneNumberCleaned = (contact) => {
+		return contact.phoneNumber.replace(/\D/g, '');
+	  };
 	  
   constructor(props) {
     let {
@@ -131,31 +156,6 @@ export class Contact {
       this.notes = notes ? notes : '';
     }
   }
-
-  setPriority(priority) {
-    this.priority = priority;
-    if (this.priority !== ContactPriority.Remove.rawValue) {
-      this.contactFrequency = ContactFrequency[priority];
-      this.nextContact = this.initialContactTime(priority);
-    }
-  }
-
-  initialContactTime = priority => {
-    let freq = ContactFrequency[priority];
-    let start = Math.floor(freq / 2);
-
-    let rand = Math.floor(Math.random() * freq) - start;
-    let days = start + rand + 1;
-
-    let today = Math.round(new Date().getTime());
-    let toc = today + days * 24 * 60 * 60 * 1000;
-    const result = new Date(toc);
-    return result;
-  };
-
-  phoneNumberCleaned = () => {
-    return this.phoneNumber.replace(/\D/g, '');
-  };
 }
 
 export default class ContactManager {

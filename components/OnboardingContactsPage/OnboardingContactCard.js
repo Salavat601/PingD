@@ -48,17 +48,17 @@ class OnboardingContactCard extends Component {
     if (priority === ContactPriority.Remove.rawValue) return;
     // selecting the same priority removes the contact
     if (priority === this.props.contact.priority) {
-      this.props.contact.setPriority(ContactPriority.Remove.rawValue);
+      Contact.setPriority(this.props.contact, ContactPriority.Remove.rawValue);
       this.props.removeContact(this.props.contact);
       return;
     }
 
     // add contact
     if (this.props.contact.priority === ContactPriority.Remove.rawValue) {
-      this.props.contact.setPriority(priority);
+      Contact.setPriority(this.props.contact, priority);
       this.props.addContact(this.props.contact);
     } else {
-      this.props.contact.setPriority(priority);
+      Contact.setPriority(this.props.contact, priority);
       this.props.setContactPriority(this.props.contact, priority);
     }
   }
