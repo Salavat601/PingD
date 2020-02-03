@@ -2,8 +2,8 @@ import { createStore, applyMiddleware } from 'redux';
 
 // Redux-persist
 import { persistStore, persistCombineReducers } from 'redux-persist';
-// import AsyncStorage from '@react-native-community/async-storage';
-import { AsyncStorage } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
+// import { AsyncStorage } from 'react-native';
 import reducers from './reducers/index';
 
 // Middlewares
@@ -14,6 +14,7 @@ import thunk from 'redux-thunk';
 const config = {
 	key: 'root',
 	storage: AsyncStorage,
+	debug: true,
 };
 
 const reducer = persistCombineReducers(config, reducers);

@@ -28,7 +28,7 @@ const ContactCard = props => {
       <View style={styles.container}>
         <Image source={contactImg} style={imageStyle} />
         <View style={styles.info}>
-          <Text style={styles.name}>{props.contact.fullName()}</Text>
+          <Text style={styles.name}>{Contact.fullName(props.contact)}</Text>
           <Text style={styles.phone}>{props.contact.phoneNumber}</Text>
         </View>
       </View>

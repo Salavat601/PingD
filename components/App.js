@@ -1,6 +1,5 @@
 import React, { Component } from 'react'; // eslint-disable-line no-unused-vars
 import { Navigation } from 'react-native-navigation';
-import { Provider } from 'react-redux';
 
 import configureStore from '../api/redux/store.js';
 import * as appActions from '../api/redux/actions/appActions/changeRoot';
@@ -12,8 +11,8 @@ import { isIOS, isAndroid } from '../helpers/platformManager';
 import { Notifications } from 'react-native-notifications';
 import detectFirstLaunch from '../utils/detectFirstLaunch'
 
-const storage = configureStore();
-registerScreens(storage.store, Provider);
+const {store, persistor} = configureStore();
+registerScreens(store, persistor);
 
 class App extends Component {
 	constructor(props) {
@@ -30,9 +29,9 @@ class App extends Component {
 		});
 
 		// NOTE: uncomment following line to purge state of app and run app once
-		storage.persistor.purge();
-		storage.store.subscribe(this.onStoreUpdate.bind(this));
-		storage.store.dispatch(appActions.appInitialized());
+		// persistor.purge();
+		store.subscribe(this.onStoreUpdate.bind(this));
+		store.dispatch(appActions.appInitialized());
 	}
 
 	onPushRegistered = async deviceToken => {
@@ -41,7 +40,7 @@ class App extends Component {
 	};
 
 	onStoreUpdate() {
-		let { root } = storage.store.getState().app;
+		let { root } = store.getState().app;
 		if (this.currentRoot != root) {
 			this.currentRoot = root;
 			this.startApp(root);

@@ -3,7 +3,7 @@
  * check if this is the 1st time launching the app
  */
 
-import { AsyncStorage } from "react-native";
+import { AsyncStorage } from "@react-native-community/async-storage";
 
 
 const HAS_LAUNCHED = "hasLaunched";

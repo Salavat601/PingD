@@ -3,10 +3,10 @@
 	"version": "0.0.1",
 	"private": true,
 	"scripts": {
-		"ios": "react-native run-ios",
+		"ios": "npx react-native run-ios",
 		"ios:podinstall": "cd ios && pod install && cd ..",
 		"ios:build": "react-native bundle --entry-file='index.js' --bundle-output='./ios/pingd/main.jsbundle' --dev=false --platform='ios' --assets-dest='./ios'",
-		"android": "react-native run-android",
+		"android": "npx react-native run-android",
 		"android:build": "react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res",
 		"android:build:release": "cd android && ./gradlew clean && ./gradlew assembleRelease && cd ..",
 		"android:clean": "cd android && ./gradlew clean && cd ..",

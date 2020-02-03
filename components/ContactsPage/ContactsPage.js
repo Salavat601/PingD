@@ -10,13 +10,13 @@ import * as appActions from '../../api/redux/actions/appActions/changeRoot';
 import ContactView from './ContactView';
 import Theme from '../Theme';
 import compareContacts from '../../utils/compareContacts';
-import {Contact} from '../../api/models/contactManager';
+import {Contact} from '../../api/models/contactManager'
 
 function ContactListItem({contact, onSelect}) {
   if (contact.isSeparator) {
     return <ContactSeparator letter={contact.letter} />;
   }
-  let name = contact.fullName();
+  let name = Contact.fullName(contact);
 
   return (
     <TouchableOpacity
@@ -87,6 +87,7 @@ class ContactsPage extends Component {
         <AppBar height={72}>
           <Text style={styles.title}>Contacts</Text>
         </AppBar>
+		<Text style={styles.description}>Choose the contacts you want to stay in touch with!</Text>
         <FlatList
           contentContainerStyle={styles.contactList}
           data={this.addContactSeparators(contacts)}
@@ -122,7 +123,9 @@ const styles = StyleSheet.create({
     backgroundColor: Theme.White,
   },
   contactList: {
-    padding: 20,
+    paddingLeft: 20,
+		paddingRight: 20,
+		paddingBottom: 20,
   },
   cardContainer: {
     marginTop: 10,
@@ -158,6 +161,14 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: Theme.Blue,
   },
+  description: {
+	justifyContent: 'center',
+	alignItems: 'center',
+	fontSize: 8,
+	color: Theme.Blue,
+	alignSelf: 'center',
+	textAlign: 'center',
+},
 });
 
 const mapStateToProps = state => {

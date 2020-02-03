@@ -238,6 +238,7 @@ class AddContactsPage extends Component {
 					onChangeText={this.onSearchKeyChanged}
 					value={search}
 				/>
+				<Text style={styles.description}>Choose the contacts you want to stay in touch with!</Text>
 				{contactList}
 			</View>
 		);
@@ -261,7 +262,17 @@ const styles = StyleSheet.create({
 		backgroundColor: Theme.White,
 	},
 	contactList: {
-		padding: 20,
+		paddingLeft: 20,
+		paddingRight: 20,
+		paddingBottom: 20,
+	},
+	description: {
+		justifyContent: 'center',
+		alignItems: 'center',
+		fontSize: 8,
+		color: Theme.Blue,
+		alignSelf: 'center',
+		textAlign: 'center',
 	},
 });
 

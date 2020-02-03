@@ -5,12 +5,10 @@ import {
 	Image,
 	StyleSheet,
 	TouchableOpacity,
-	TouchableHighlight,
 	Modal,
 	TextInput,
 	Alert,
 	FlatList,
-	EventSubscriptionVendor,
 	ScrollView,
 } from 'react-native';
 import { connect } from 'react-redux';
@@ -39,7 +37,7 @@ const styles = StyleSheet.create({
 	description: {
 		justifyContent: 'center',
 		alignItems: 'center',
-		fontSize: 14,
+		fontSize: 8,
 		color: Theme.Blue,
 		alignSelf: 'center',
 		textAlign: 'center',
@@ -48,7 +46,7 @@ const styles = StyleSheet.create({
 	description2: {
 		justifyContent: 'center',
 		alignItems: 'center',
-		fontSize: 14,
+		fontSize: 8,
 		color: Theme.Blue,
 		alignSelf: 'center',
 		textAlign: 'center',
@@ -104,7 +102,9 @@ const styles = StyleSheet.create({
 const modalStyles = StyleSheet.create({
 	title: {
 		alignSelf: 'center',
-		padding: 20,
+		paddingLeft: 20,
+		paddingRight: 20,
+		paddingBottom: 20,
 		color: Theme.DarkBlue,
 		fontSize: 25,
 		fontWeight: '600',
@@ -112,12 +112,12 @@ const modalStyles = StyleSheet.create({
 	container: {
 		paddingLeft: 20,
 		paddingRight: 20,
-		paddingTop: 20,
+		paddingTop: 10,
 		paddingBottom: 40,
 	},
 	close: {
-		width: 50,
-		height: 50,
+		width: 20,
+		height: 20,
 	},
 	description: {
 		alignSelf: 'center',
@@ -460,9 +460,6 @@ class CalendarPage extends Component {
 				<Modal transparent animationType='fade' visible={this.state.showNewEventModal} style={{ backgroundColor: 'blue' }}>
 					<View
 						style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', }}>
-						<Text style={{ alignSelf: 'center', fontSize: 25, backgroundColor: 'white' }}>
-							<Moment element={Text} format='MMMM YYYY'>{this.state.selectedDate}</Moment>
-						</Text>
 						<View style={{ flexWrap: 'wrap', alignSelf: 'center', borderRadius: 10, backgroundColor: Theme.FadedBlueContact, }}>
 							<TouchableOpacity onPress={() => { this.setState({ showNewEventModal: false }) }}>
 								<Image source={require('../../assets/close.png')} style={modalStyles.close} />

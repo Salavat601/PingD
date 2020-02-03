@@ -31,7 +31,7 @@ export default function events(contactsState = initialState, action) {
 			const { payload } = action;
 			const { event } = payload;
 
-			newState.events = newState.events.filter(item => item.eventId != event.eventId)
+			newState.events = newState.events.filter(item => item.eventId !== event.eventId)
 
 			return newState;
 		}

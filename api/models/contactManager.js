@@ -80,6 +80,10 @@ export function sortContacts(contact1, contact2) {
 }
 
 export class Contact {
+	static fullName = (contact) => {
+		return `${contact.firstName} ${contact.lastName}`.trim();
+	  };
+	  
   constructor(props) {
     let {
       info,
@@ -147,10 +151,6 @@ export class Contact {
     let toc = today + days * 24 * 60 * 60 * 1000;
     const result = new Date(toc);
     return result;
-  };
-
-  fullName = () => {
-    return `${this.firstName} ${this.lastName}`.trim();
   };
 
   phoneNumberCleaned = () => {

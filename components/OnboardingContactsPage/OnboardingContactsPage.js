@@ -69,6 +69,14 @@ const buttonStyles = StyleSheet.create({
 		width: 36,
 		height: 36,
 	},
+	description: {
+		justifyContent: 'center',
+		alignItems: 'center',
+		fontSize: 8,
+		color: Theme.Blue,
+		alignSelf: 'center',
+		textAlign: 'center',
+	},
 });
 
 class OnboardingContactsPage extends Component {
@@ -225,6 +233,7 @@ class OnboardingContactsPage extends Component {
 					onChangeText={(text) => { this.onSearchKeyChanged(text) }}
 					value={this.state.searchKey}
 				/>
+				<Text style={styles.description}>Choose the contacts you want to stay in touch with!</Text>
 				{contactList}
 			</View>
 		);
@@ -248,8 +257,18 @@ const styles = StyleSheet.create({
 		backgroundColor: Theme.White,
 	},
 	contactList: {
-		padding: 20,
+		paddingLeft: 20,
+		paddingRight: 20,
+		paddingBottom: 20,
 	},
+	description: {
+	justifyContent: 'center',
+	alignItems: 'center',
+	fontSize: 8,
+	color: Theme.Blue,
+	alignSelf: 'center',
+	textAlign: 'center',
+	}
 });
 
 
