@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {
 	FlatList,
 	Image,
@@ -9,9 +9,9 @@ import {
 	Platform,
 	PermissionsAndroid,
 } from 'react-native';
-import { SearchBar } from 'react-native-elements';
+import {SearchBar} from 'react-native-elements';
 import Contacts from 'react-native-contacts';
-import { connect } from 'react-redux';
+import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 
 import * as appActions from '../../api/redux/actions/appActions/changeRoot';
@@ -20,10 +20,12 @@ import AppBar from '../generic/AppBar';
 import ContactSeparator from '../generic/ContactSeparator';
 import OnboardingContactCard from './OnboardingContactCard';
 import Theme from '../Theme';
-import ContactManager, { Contact, sortContacts } from '../../api/models/contactManager'
+import ContactManager, {
+	Contact,
+	sortContacts,
+} from '../../api/models/contactManager';
 
-
-const ContinueButton = (props) => (
+const ContinueButton = props => (
 	<TouchableOpacity
 		onPress={props.continue}
 		style={buttonStyles.continueButtonWrapper}>
@@ -61,7 +63,7 @@ const buttonStyles = StyleSheet.create({
 		borderColor: Theme.White,
 		shadowColor: Theme.Black,
 		shadowOpacity: 0.16,
-		shadowOffset: { width: 0, height: 3 },
+		shadowOffset: {width: 0, height: 3},
 		shadowRadius: 6,
 	},
 	continueButtonImg: {
@@ -72,8 +74,8 @@ const buttonStyles = StyleSheet.create({
 	description: {
 		justifyContent: 'center',
 		alignItems: 'center',
+		marginTop: 6,
 		fontSize: 8,
-		color: Theme.Blue,
 		alignSelf: 'center',
 		textAlign: 'center',
 	},
@@ -85,7 +87,7 @@ class OnboardingContactsPage extends Component {
 
 		this.state = {
 			contacts: [],
-			searchKey: "",
+			searchKey: '',
 			searchResult: [],
 		};
 
@@ -103,48 +105,49 @@ class OnboardingContactsPage extends Component {
 		}
 
 		if (!contactInfos) {
-			console.log("Contacts is empty.");
+			console.log('Contacts is empty.');
 			return;
 		}
 
-		let contacts = []
+		let contacts = [];
 		for (let i = 0; i < contactInfos.length; i++) {
-			const contact = new Contact({ info: contactInfos[i] })
-			if (!contact.firstName.startsWith('#') && !(contact.firstName === '' && contact.lastName === '')) {
-				contacts.push(contact)
+			const contact = new Contact({info: contactInfos[i]});
+			if (
+				!contact.firstName.startsWith('#') &&
+				!(contact.firstName === '' && contact.lastName === '')
+			) {
+				contacts.push(contact);
 			}
 		}
 
-		this.setState({ contacts: contacts.sort(sortContacts) });
-		this.searchContacts("")
+		this.setState({contacts: contacts.sort(sortContacts)});
+		this.searchContacts('');
 	}
 
 	async _getContacts() {
-		if (Platform.OS == "ios") {
+		if (Platform.OS == 'ios') {
 			Contacts.getAll((err, contacts) => {
 				this.onContactsFetched(err, contacts);
 			});
 		} else {
 			PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_CONTACTS, {
-				'title': 'Contacts',
-				'message': 'This app would like to view your contacts.',
-				'buttonPositive': 'Please accept bare mortal'
+				title: 'Contacts',
+				message: 'This app would like to view your contacts.',
+				buttonPositive: 'Please accept bare mortal',
 			}).then(() => {
 				Contacts.getAll((err, contacts) => {
 					this.onContactsFetched(err, contacts);
-				})
-			})
+				});
+			});
 		}
 	}
 
 	renderContactCard(contact) {
 		if (contact.isSeparator) {
-			return <ContactSeparator letter={contact.letter} />
+			return <ContactSeparator letter={contact.letter} />;
 		}
 
-		return (
-			<OnboardingContactCard contact={contact} />
-		);
+		return <OnboardingContactCard contact={contact} />;
 	}
 
 	addContactSeparators(contacts) {
@@ -156,9 +159,12 @@ class OnboardingContactsPage extends Component {
 		}
 
 		for (let i = 0; i < contacts.length; i++) {
-			let initial = contacts[i].lastName.length > 0 ? contacts[i].lastName.substring(0, 1) : "";
+			let initial =
+				contacts[i].firstName.length > 0
+					? contacts[i].firstName.substring(0, 1)
+					: '';
 			if (initial != lastInitial) {
-				results.push({ isSeparator: true, letter: initial });
+				results.push({isSeparator: true, letter: initial});
 				lastInitial = initial;
 			}
 
@@ -177,24 +183,30 @@ class OnboardingContactsPage extends Component {
 	};
 
 	searchContacts(search) {
-		const { contacts } = this.state;
-		const searchResult = contacts.filter(function (contact) {
+		const {contacts} = this.state;
+		const searchResult = contacts.filter(function(contact) {
 			if (!search || search == '') {
 				return true;
 			}
 
-			if (contact.firstName && contact.firstName.toLowerCase().indexOf(search.toLowerCase()) != -1) {
+			if (
+				contact.firstName &&
+				contact.firstName.toLowerCase().indexOf(search.toLowerCase()) != -1
+			) {
 				console.log('Given Name is Matched.');
 				return true;
 			}
 
-			if (contact.lastName && contact.lastName.toLowerCase().indexOf(search.toLowerCase()) != -1) {
+			if (
+				contact.lastName &&
+				contact.lastName.toLowerCase().indexOf(search.toLowerCase()) != -1
+			) {
 				console.log('Family Name is Matched.');
 				return true;
 			}
 
 			if (contact.phoneNumber && contact.phoneNumber.indexOf(search) != -1) {
-				return true
+				return true;
 			}
 
 			return false;
@@ -214,26 +226,28 @@ class OnboardingContactsPage extends Component {
 					contentContainerStyle={styles.contactList}
 					data={this.addContactSeparators(this.state.searchResult)}
 					keyExtractor={(item, index) => index.toString()}
-					renderItem={({ item }) => this.renderContactCard(item)}
+					renderItem={({item}) => this.renderContactCard(item)}
 				/>
 			);
 
 		return (
 			<View style={styles.container}>
 				<AppBar>
-					<Text style={styles.appBarText}>
-						{'Select your contacts'}
-					</Text>
+					<Text style={styles.appBarText}>{'Select your contacts'}</Text>
 					<ContinueButton continue={this._startApp} />
 				</AppBar>
 				<SearchBar
-					inputContainerStyle={{ backgroundColor: 'white' }}
-					containerStyle={{ backgroundColor: 'white' }}
+					inputContainerStyle={{backgroundColor: 'white'}}
+					containerStyle={{backgroundColor: 'white'}}
 					placeholder="Type Here..."
-					onChangeText={(text) => { this.onSearchKeyChanged(text) }}
+					onChangeText={text => {
+						this.onSearchKeyChanged(text);
+					}}
 					value={this.state.searchKey}
 				/>
-				<Text style={styles.description}>Choose the contacts you want to stay in touch with!</Text>
+				<Text style={styles.description}>
+					Choose the contacts you want to stay in touch with!
+				</Text>
 				{contactList}
 			</View>
 		);
@@ -262,21 +276,20 @@ const styles = StyleSheet.create({
 		paddingBottom: 20,
 	},
 	description: {
-	justifyContent: 'center',
-	alignItems: 'center',
-	fontSize: 8,
-	color: Theme.Blue,
-	alignSelf: 'center',
-	textAlign: 'center',
-	}
+		justifyContent: 'center',
+		alignItems: 'center',
+		fontSize: 8,
+		color: Theme.Blue,
+		alignSelf: 'center',
+		textAlign: 'center',
+	},
 });
-
 
 const mapStateToProps = () => {
 	return {};
 };
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = dispatch => {
 	return {
 		startMainApp: () => dispatch(appActions.contactsDoneImporting()),
 	};
@@ -284,5 +297,5 @@ const mapDispatchToProps = (dispatch) => {
 
 export default connect(
 	mapStateToProps,
-	mapDispatchToProps
+	mapDispatchToProps,
 )(OnboardingContactsPage);

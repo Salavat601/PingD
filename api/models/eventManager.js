@@ -1,26 +1,24 @@
-import React, { Component } from 'react';
-import EventTypes, { EventType } from './eventTypes';
+import React, {Component} from 'react';
+import EventTypes, {EventType} from './eventTypes';
 import moment from 'moment';
-import { checkPermission } from 'react-native-contacts';
+import {checkPermission} from 'react-native-contacts';
 
-const format = "YYYY-MM-DD";
+const format = 'YYYY-MM-DD';
 
-export const Event = (props) => {
-	const { index, date, comment } = props;
+export const Event = props => {
+	const {index, date, comment} = props;
 
-	return (
-		{
-			eventId: "0",
-			index: index,
-			date: date,
-			comment: comment,
-			typeRef: EventTypes.event(index),
-		}
-	)
-}
+	return {
+		eventId: '0',
+		index: index,
+		date: date,
+		comment: comment,
+		typeRef: EventTypes.event(index),
+	};
+};
 
 export default class EventManager {
-	static sharedInstance = EventManager.instance || new EventManager()
+	static sharedInstance = EventManager.instance || new EventManager();
 
 	static eventWithDate(events, date) {
 		let results = [];
@@ -30,7 +28,7 @@ export default class EventManager {
 			if (strDate == strItemDate) {
 				results.push(item);
 			}
-		})
+		});
 
 		return results;
 	}

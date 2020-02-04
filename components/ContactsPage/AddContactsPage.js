@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {
 	FlatList,
 	Image,
@@ -8,9 +8,9 @@ import {
 	View,
 	PermissionsAndroid,
 } from 'react-native';
-import { SearchBar } from 'react-native-elements';
+import {SearchBar} from 'react-native-elements';
 import Contacts from 'react-native-contacts';
-import { connect } from 'react-redux';
+import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 
 import * as appActions from '../../api/redux/actions/appActions/changeRoot';
@@ -19,7 +19,10 @@ import AppBar from '../generic/AppBar';
 import ContactSeparator from '../generic/ContactSeparator';
 import OnboardingContactCard from '../OnboardingContactsPage/OnboardingContactCard';
 import Theme from '../Theme';
-import ContactManager, { Contact, sortContacts } from '../../api/models/contactManager'
+import ContactManager, {
+	Contact,
+	sortContacts,
+} from '../../api/models/contactManager';
 
 const ContinueButton = props => (
 	<TouchableOpacity
@@ -59,7 +62,7 @@ const buttonStyles = StyleSheet.create({
 		borderColor: Theme.White,
 		shadowColor: Theme.Black,
 		shadowOpacity: 0.16,
-		shadowOffset: { width: 0, height: 3 },
+		shadowOffset: {width: 0, height: 3},
 		shadowRadius: 6,
 	},
 	continueButtonImg: {
@@ -69,13 +72,13 @@ const buttonStyles = StyleSheet.create({
 	},
 });
 
-
-
 class AddContactsPage extends Component {
 	constructor(props) {
 		super(props);
 
-		const savedNumbers = this.props.contacts.map((item, index) => { return item.phoneNumber })
+		const savedNumbers = this.props.contacts.map((item, index) => {
+			return item.phoneNumber;
+		});
 
 		this.state = {
 			savedNumbers: savedNumbers,
@@ -92,10 +95,10 @@ class AddContactsPage extends Component {
 	}
 
 	searchContacts(search) {
-		const { contacts, savedNumbers } = this.state;
-		const searchResult = contacts.filter(function (contact) {
+		const {contacts, savedNumbers} = this.state;
+		const searchResult = contacts.filter(function(contact) {
 			if (savedNumbers.indexOf(contact.phoneNumber) !== -1) {
-				return false
+				return false;
 			}
 
 			if (!search || search == '') {
@@ -113,7 +116,7 @@ class AddContactsPage extends Component {
 			}
 
 			if (contact.phoneNumber && contact.phoneNumber.indexOf(search) != -1) {
-				return true
+				return true;
 			}
 
 			return false;
@@ -140,16 +143,19 @@ class AddContactsPage extends Component {
 			return;
 		}
 
-		const { savedNumbers } = this.state
-		let contacts = []
+		const {savedNumbers} = this.state;
+		let contacts = [];
 		for (let i = 0; i < contactInfos.length; i++) {
-			const contact = new Contact({ info: contactInfos[i] })
-			if (!contact.firstName.startsWith('#') && !(contact.firstName === '' && contact.lastName === '')) {
-				contacts.push(contact)
+			const contact = new Contact({info: contactInfos[i]});
+			if (
+				!contact.firstName.startsWith('#') &&
+				!(contact.firstName === '' && contact.lastName === '')
+			) {
+				contacts.push(contact);
 			}
 		}
 
-		this.setState({ contacts: contacts.sort(sortContacts) });
+		this.setState({contacts: contacts.sort(sortContacts)});
 		this.searchContacts(this.state.search);
 	}
 
@@ -175,11 +181,7 @@ class AddContactsPage extends Component {
 		if (contact.isSeparator)
 			return <ContactSeparator letter={contact.letter} />;
 
-		return (
-			<OnboardingContactCard
-				contact={contact}
-			/>
-		);
+		return <OnboardingContactCard contact={contact} />;
 	}
 
 	addContactSeparators(contacts) {
@@ -191,14 +193,17 @@ class AddContactsPage extends Component {
 		}
 
 		for (let i = 0; i < contacts.length; i++) {
-			const contact = contacts[i]
+			const contact = contacts[i];
 			if (!contact) {
-				continue
+				continue;
 			}
 
-			let initial = contacts[i].lastName.length > 0 ? contacts[i].lastName.substring(0, 1) : "";
+			let initial =
+				contacts[i].firstName.length > 0
+					? contacts[i].firstName.substring(0, 1)
+					: '';
 			if (initial != lastInitial) {
-				results.push({ isSeparator: true, letter: initial });
+				results.push({isSeparator: true, letter: initial});
 				lastInitial = initial;
 			}
 
@@ -214,14 +219,14 @@ class AddContactsPage extends Component {
 
 	render() {
 		let contactList = null;
-		const { search } = this.state;
+		const {search} = this.state;
 		if (this.state.searchResult.length > 0)
 			contactList = (
 				<FlatList
 					contentContainerStyle={styles.contactList}
 					data={this.addContactSeparators(this.state.searchResult)}
 					keyExtractor={(item, index) => index.toString()}
-					renderItem={({ item }) => this.renderContactCard(item)}
+					renderItem={({item}) => this.renderContactCard(item)}
 				/>
 			);
 
@@ -232,13 +237,15 @@ class AddContactsPage extends Component {
 					<ContinueButton continue={this._startApp} />
 				</AppBar>
 				<SearchBar
-					inputContainerStyle={{ backgroundColor: 'white' }}
-					containerStyle={{ backgroundColor: 'white' }}
+					inputContainerStyle={{backgroundColor: 'white'}}
+					containerStyle={{backgroundColor: 'white'}}
 					placeholder="Type Here..."
 					onChangeText={this.onSearchKeyChanged}
 					value={search}
 				/>
-				<Text style={styles.description}>Choose the contacts you want to stay in touch with!</Text>
+				<Text style={styles.description}>
+					Choose the contacts you want to stay in touch with!
+				</Text>
 				{contactList}
 			</View>
 		);
@@ -269,8 +276,8 @@ const styles = StyleSheet.create({
 	description: {
 		justifyContent: 'center',
 		alignItems: 'center',
+		marginTop: 6,
 		fontSize: 8,
-		color: Theme.Blue,
 		alignSelf: 'center',
 		textAlign: 'center',
 	},

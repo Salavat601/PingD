@@ -1,11 +1,11 @@
 const _ = require('lodash');
 
-import { ADD_CONTACT } from '../actions/addContact';
-import { REMOVE_CONTACT } from '../actions/removeContact';
-import { SET_CONTACT_PRIORITY } from '../actions/setContactPriority';
-import { UPDATE_CONTACT } from '../actions/updateContact';
+import {ADD_CONTACT} from '../actions/addContact';
+import {REMOVE_CONTACT} from '../actions/removeContact';
+import {SET_CONTACT_PRIORITY} from '../actions/setContactPriority';
+import {UPDATE_CONTACT} from '../actions/updateContact';
 import * as NotificationManager from '../actions/notificationManager';
-import { Contact } from '../../models/contactManager';
+import {Contact} from '../../models/contactManager';
 
 const initialState = {
   contacts: [],
@@ -15,7 +15,7 @@ export default function contacts(contactsState = initialState, action) {
   switch (action.type) {
     case ADD_CONTACT: {
       const newState = _.cloneDeep(contactsState);
-      const { payload } = action;
+      const {payload} = action;
 
       if (payload.contact) {
         const found = newState.contacts.find(
@@ -32,8 +32,8 @@ export default function contacts(contactsState = initialState, action) {
 
     case SET_CONTACT_PRIORITY: {
       const newState = _.cloneDeep(contactsState);
-      const { payload } = action;
-      const { contact, priority } = payload;
+      const {payload} = action;
+      const {contact, priority} = payload;
 
       for (let i = 0; i < newState.contacts.length; i++) {
         if (newState.contacts[i].contactId === contact.contactId) {
@@ -48,12 +48,12 @@ export default function contacts(contactsState = initialState, action) {
 
     case REMOVE_CONTACT: {
       const newState = _.cloneDeep(contactsState);
-      const { payload } = action;
+      const {payload} = action;
 
       const results = newState.contacts.filter(
         c => c.contactId !== payload.contact.contactId,
       );
-      let finalState = { contacts: results };
+      let finalState = {contacts: results};
 
       NotificationManager.cancel(payload.contact);
 
@@ -64,8 +64,8 @@ export default function contacts(contactsState = initialState, action) {
 
     case UPDATE_CONTACT: {
       const newState = _.cloneDeep(contactsState);
-      const { payload } = action;
-      const { contact } = payload;
+      const {payload} = action;
+      const {contact} = payload;
 
       for (let i = 0; i < newState.contacts.length; i++) {
         let oldContact = newState.contacts[i];

@@ -4,12 +4,22 @@
 	// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
 	"version": "0.2.0",
 	"configurations": [
+
 		{
 			"name": "Debug Android",
 			"cwd": "${workspaceFolder}",
 			"type": "reactnative",
 			"request": "launch",
-			"platform": "android"
+			"platform": "android",
+			"target": "simulator",
+		},
+		{
+			"name": "Debug Android on Device",
+			"cwd": "${workspaceFolder}",
+			"type": "reactnative",
+			"request": "launch",
+			"platform": "android",
+			"target": "device",
 		},
 		{
 			"name": "Debug iOS",

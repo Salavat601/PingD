@@ -1,4 +1,4 @@
-import detectFirstLaunch from '../../../../utils/detectFirstLaunch'
+import detectFirstLaunch from '../../../../utils/detectFirstLaunch';
 export const ROOT_CHANGED = 'ROOT_CHANGED';
 
 /**
@@ -18,12 +18,13 @@ export function changeAppRoot(root) {
  * screens should appear.
  */
 export function appInitialized() {
-	return async function (dispatch) {
+	return async function(dispatch) {
+		dispatch(changeAppRoot('login'));
 		detectFirstLaunch().then(value => {
 			if (value) {
 				dispatch(changeAppRoot('login'));
 			}
-		})
+		});
 	};
 }
 
@@ -31,7 +32,7 @@ export function appInitialized() {
  * Transition from onboarding to importing contacts.
  */
 export function login() {
-	return async function (dispatch) {
+	return async function(dispatch) {
 		/*
 		 * Any login logic will go here
 		 */
@@ -43,7 +44,7 @@ export function login() {
  * Adding New Contacts
  */
 export function addNew() {
-	return async function (dispatch) {
+	return async function(dispatch) {
 		/*
 		 * Any login logic will go here
 		 */
@@ -56,7 +57,7 @@ export function addNew() {
  * the main app should now be displayed.
  */
 export function contactsDoneImporting() {
-	return async function (dispatch) {
+	return async function(dispatch) {
 		dispatch(changeAppRoot('app'));
 	};
 }
