@@ -15,7 +15,7 @@ import Communications from 'react-native-communications';
 import Theme from '../Theme';
 import { ContactFreqs, SnoozeFreqs } from '../ContactUtils';
 import Swipeable from 'react-native-swipeable-row';
-import {Contact} from '../../api/models/contactManager'
+import { Contact } from '../../api/models/contactManager'
 
 
 class PingCard extends Component {
@@ -95,8 +95,6 @@ class PingCard extends Component {
 	}
 
 	getCardStyle() {
-
-
 		var style = {
 			height: 80,
 			flex: 1,
@@ -112,8 +110,6 @@ class PingCard extends Component {
 		//   style.borderColor = '#C7070F';
 		//
 		// }
-
-
 
 		return style;
 	}

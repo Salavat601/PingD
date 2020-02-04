@@ -18,6 +18,14 @@
 			"request": "launch",
 			"platform": "ios",
 			"target": "simulator"
+		},
+		{
+			"name": "Debug iOS Device",
+			"cwd": "${workspaceFolder}",
+			"type": "reactnative",
+			"request": "launch",
+			"platform": "ios",
+			"target": "device"
 		}
 	]
 }

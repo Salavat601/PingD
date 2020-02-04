@@ -11,19 +11,19 @@ import OnboardingContactsPage from './OnboardingContactsPage/OnboardingContactsP
 import AddContactsPage from './ContactsPage/AddContactsPage';
 
 function ReduxProvider(store, persistor, Component) {
-    return (props) => (
-        <Provider store={store}>
-		<PersistGate loading={null} persistor={persistor}>
-		<Component {...props} />
-		</PersistGate>
-        </Provider>
-    );
+	return (props) => (
+		<Provider store={store}>
+			<PersistGate loading={null} persistor={persistor}>
+				<Component {...props} />
+			</PersistGate>
+		</Provider>
+	);
 }
 
 export function registerScreens(store, persistor) {
 	Navigation.registerComponent('PingD.Contacts', () => ReduxProvider(store, persistor, ContactsPage), () => ContactsPage);
-	Navigation.registerComponent('PingD.Calendar', () => ReduxProvider(store, persistor, CalendarPage), () => CalendarPage);
 	Navigation.registerComponent('PingD.PingList', () => ReduxProvider(store, persistor, PingList), () => PingList);
+	Navigation.registerComponent('PingD.Calendar', () => ReduxProvider(store, persistor, CalendarPage), () => CalendarPage);
 	Navigation.registerComponent('PingD.Onboarding', () => ReduxProvider(store, persistor, Onboarding), () => Onboarding);
 	Navigation.registerComponent('PingD.OnboardingContacts', () => ReduxProvider(store, persistor, OnboardingContactsPage), () => OnboardingContactsPage);
 	Navigation.registerComponent('PingD.AddContacts', () => ReduxProvider(store, persistor, AddContactsPage), () => AddContactsPage);
@@ -31,6 +31,9 @@ export function registerScreens(store, persistor) {
 	/*
 	Navigation.registerComponentWithRedux('PingD.Calendar', () =>
 		CalendarPage, Provider, store
+	);
+	Navigation.registerComponentWithRedux('PingD.Contacts', () =>
+		ContactsPage, Provider, store
 	);
 	Navigation.registerComponentWithRedux('PingD.PingList', () =>
 		PingList, Provider, store

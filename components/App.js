@@ -11,8 +11,15 @@ import { isIOS, isAndroid } from '../helpers/platformManager';
 import { Notifications } from 'react-native-notifications';
 import detectFirstLaunch from '../utils/detectFirstLaunch'
 
-const {store, persistor} = configureStore();
+const { store, persistor } = configureStore();
 registerScreens(store, persistor);
+
+function setNavigationDefaultOptions() {
+	Navigation.setDefaultOptions({
+		bottomTabs: { backgroundColor: 'white', barStyle: 'default', translucent: false, },
+		bottomTab: { selectedTextColor: Theme.Blue, },
+	});
+}
 
 class App extends Component {
 	constructor(props) {
@@ -31,7 +38,9 @@ class App extends Component {
 		// NOTE: uncomment following line to purge state of app and run app once
 		// persistor.purge();
 		store.subscribe(this.onStoreUpdate.bind(this));
-		store.dispatch(appActions.appInitialized());
+		Navigation.events().registerAppLaunchedListener(() => {
+			store.dispatch(appActions.appInitialized());
+		})
 	}
 
 	onPushRegistered = async deviceToken => {
@@ -51,45 +60,41 @@ class App extends Component {
 		switch (root) {
 			case 'app': {
 				if (isIOS) {
-					Navigation.events().registerAppLaunchedListener(() => {
-						Navigation.setDefaultOptions({
-							bottomTabs: { backgroundColor: 'white', barStyle: 'default', translucent: false, },
-							bottomTab: { selectedTextColor: Theme.Blue, },
-						});
+					setNavigationDefaultOptions()
 
-						Navigation.setRoot({
-							root: {
-								bottomTabs: {
-									children: [{
-										component: {
-											name: 'PingD.Contacts',
-											options: {
-												bottomTab: { text: 'Contacts', icon: require('../assets/contacts_unselected.png'), selectedIcon: require('../assets/contacts_selected.png'), },
-												topBar: { visible: false, animate: false, }
-											}
+					Navigation.setRoot({
+						root: {
+							bottomTabs: {
+								children: [{
+									component: {
+										name: 'PingD.Contacts',
+										options: {
+											bottomTab: { text: 'Contacts', icon: require('../assets/contacts_unselected.png'), selectedIcon: require('../assets/contacts_selected.png'), },
+											topBar: { visible: false, animate: false, }
 										}
-									}, {
-										component: {
-											name: 'PingD.PingList',
-											options: {
-												bottomTab: { text: 'Ping List', icon: require('../assets/ping_list_unselected.png'), selectedIcon: require('../assets/ping_list_selected.png'), },
-												topBar: { visible: false, animate: false, }
-											}
+									}
+								}, {
+									component: {
+										name: 'PingD.PingList',
+										options: {
+											bottomTab: { text: 'Ping List', icon: require('../assets/ping_list_unselected.png'), selectedIcon: require('../assets/ping_list_selected.png'), },
+											topBar: { visible: false, animate: false, }
 										}
-									}, {
-										component: {
-											name: 'PingD.Calendar',
-											options: {
-												bottomTab: { text: 'Calendar', icon: require('../assets/calendar_unselected.png'), selectedIcon: require('../assets/calendar_selected.png'), },
-												topBar: { visible: false, animate: false, }
-											}
+									}
+								}, {
+									component: {
+										name: 'PingD.Calendar',
+										options: {
+											bottomTab: { text: 'Calendar', icon: require('../assets/calendar_unselected.png'), selectedIcon: require('../assets/calendar_selected.png'), },
+											topBar: { visible: false, animate: false, }
 										}
-									},]
-								}
+									}
+								},]
 							}
-						});
-					})
+						}
+					});
 				} else {
+					setNavigationDefaultOptions()
 					Navigation.setRoot({
 						root: {
 							bottomTabs: {
@@ -127,29 +132,25 @@ class App extends Component {
 
 			case 'login': {
 				if (isIOS) {
-					Navigation.events().registerAppLaunchedListener(() => {
-						Navigation.setDefaultOptions({
-							bottomTabs: { backgroundColor: 'white', barStyle: 'default', translucent: false, },
-							bottomTab: { selectedTextColor: Theme.Blue, },
-						});
+					setNavigationDefaultOptions()
 
-						Navigation.setRoot({
-							root: {
-								stack: {
-									children: [{
-										component: {
-											name: 'PingD.Onboarding',
-											options: {
-												topBar: { visible: false, animate: false, }
-											},
-											passProps: { text: 'stack with one child' },
-										}
-									}],
-								}
+					Navigation.setRoot({
+						root: {
+							stack: {
+								children: [{
+									component: {
+										name: 'PingD.Onboarding',
+										options: {
+											topBar: { visible: false, animate: false, }
+										},
+										passProps: { text: 'stack with one child' },
+									}
+								}],
 							}
-						});
-					})
+						}
+					});
 				} else {
+					setNavigationDefaultOptions()
 					Navigation.setRoot({
 						root: {
 							stack: {
@@ -171,46 +172,92 @@ class App extends Component {
 			}
 
 			case 'importing': {
-				Navigation.setRoot({
-					root: {
-						stack: {
-							children: [{
-								component: {
-									name: 'PingD.OnboardingContacts',
-									options: {
-										topBar: {
-											visible: false,
-											animate: false,
-										}
-									},
-								}
-							}],
+				if (isIOS) {
+					setNavigationDefaultOptions()
 
+					Navigation.setRoot({
+						root: {
+							stack: {
+								children: [{
+									component: {
+										name: 'PingD.OnboardingContacts',
+										options: {
+											topBar: {
+												visible: false,
+												animate: false,
+											}
+										},
+									}
+								}],
+							}
 						}
-					}
-				});
+					});
+				} else {
+					setNavigationDefaultOptions()
+					Navigation.setRoot({
+						root: {
+							stack: {
+								children: [{
+									component: {
+										name: 'PingD.OnboardingContacts',
+										options: {
+											topBar: {
+												visible: false,
+												animate: false,
+											}
+										},
+									}
+								}],
+
+							}
+						}
+					});
+				}
 				return;
 			}
-
 			case 'addNew': {
-				Navigation.setRoot({
-					root: {
-						stack: {
-							children: [{
-								component: {
-									name: 'PingD.AddContacts',
-									options: {
-										topBar: {
-											visible: false,
-											animate: false,
-										}
-									},
-								}
-							}],
+				if (isIOS) {
+					setNavigationDefaultOptions()
 
+					Navigation.setRoot({
+						root: {
+							stack: {
+								children: [{
+									component: {
+										name: 'PingD.AddContacts',
+										options: {
+											topBar: {
+												visible: false,
+												animate: false,
+											}
+										},
+									}
+								}],
+
+							}
 						}
-					}
-				});
+					});
+				} else {
+					setNavigationDefaultOptions()
+					Navigation.setRoot({
+						root: {
+							stack: {
+								children: [{
+									component: {
+										name: 'PingD.AddContacts',
+										options: {
+											topBar: {
+												visible: false,
+												animate: false,
+											}
+										},
+									}
+								}],
+
+							}
+						}
+					});
+				}
 				return;
 			}
 

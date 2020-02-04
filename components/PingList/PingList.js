@@ -38,6 +38,8 @@ class PingList extends Component {
 	}
 
 	render() {
+		const contacts = this.props.contacts.sort((c1, c2) => this.comparePingCards(c1, c2));
+		console.log("Contacts: ", contacts);
 		return (
 			<View>
 				<AppBar height={100}>
@@ -53,7 +55,7 @@ class PingList extends Component {
 					this.props.contacts
 						?
 						<FlatList
-							data={this.props.contacts.sort((c1, c2) => this.comparePingCards(c1, c2))}
+							data={contacts}
 							renderItem={({ item }) => <PingCard contact={item} />}
 						/>
 						: <Text>no</Text>

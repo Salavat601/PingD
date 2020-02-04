@@ -3,27 +3,32 @@
  * check if this is the 1st time launching the app
  */
 
-import { AsyncStorage } from "@react-native-community/async-storage";
+import AsyncStorage from '@react-native-community/async-storage';
 
 
 const HAS_LAUNCHED = "hasLaunched";
 
 
-function setLaunched() {
-    AsyncStorage.setItem(HAS_LAUNCHED, "true");
+export function setLaunched() {
+	try {
+		AsyncStorage.setItem(HAS_LAUNCHED, "true");
+	} catch (error) {
+		console.log(error)
+	}
 }
 
-
 export default async function detectFirstLaunch() {
-    try {
-        const hasLaunched = await AsyncStorage.getItem(HAS_LAUNCHED);
-        if (hasLaunched === null) {
-            setLaunched();
-            return true;
-        } else {
-            return false;
-        }
-    } catch (error) {
-        return false;
-    }
+	try {
+		const hasLaunched = await AsyncStorage.getItem(HAS_LAUNCHED);
+		console.log('hasLaunched', hasLaunched)
+		if (hasLaunched !== null) {
+			return false;
+		} else {
+			setLaunched();
+			return true;
+		}
+	} catch (error) {
+		console.log(error)
+		return false;
+	}
 }

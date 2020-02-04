@@ -21,8 +21,6 @@ import com.rt2zz.reactnativecontacts.ReactNativeContacts;
 import com.wix.reactnativenotifications.RNNotificationsPackage;
 import com.reactnativecommunity.viewpager.RNCViewPagerPackage;
 
-import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
-
 import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;
 
 public class MainApplication extends NavigationApplication {

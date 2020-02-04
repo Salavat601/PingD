@@ -19,13 +19,11 @@ export function changeAppRoot(root) {
  */
 export function appInitialized() {
 	return async function (dispatch) {
-		/*
-		 * App initialization code here
-		 */
 		detectFirstLaunch().then(value => {
-			dispatch(changeAppRoot(value ? 'login' : 'importing'));
+			if (value) {
+				dispatch(changeAppRoot('login'));
+			}
 		})
-
 	};
 }
 

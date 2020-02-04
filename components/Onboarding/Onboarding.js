@@ -14,6 +14,7 @@ import Swiper from 'react-native-swiper';
 import { connect } from 'react-redux';
 import Theme from '../Theme';
 import * as appActions from '../../api/redux/actions/appActions/changeRoot';
+import { setLaunched } from '../../utils/detectFirstLaunch'
 
 class Onboarding extends Component {
 	constructor(props) {
@@ -23,6 +24,7 @@ class Onboarding extends Component {
 	}
 
 	_startApp = () => {
+		setLaunched();
 		this.props.startAppImporting();
 	}
 

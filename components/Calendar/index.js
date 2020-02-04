@@ -116,8 +116,8 @@ const modalStyles = StyleSheet.create({
 		paddingBottom: 40,
 	},
 	close: {
-		width: 20,
-		height: 20,
+		width: 40,
+		height: 40,
 	},
 	description: {
 		alignSelf: 'center',
