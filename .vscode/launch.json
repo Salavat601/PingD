@@ -19,7 +19,7 @@
 			"type": "reactnative",
 			"request": "launch",
 			"platform": "android",
-			"target": "device",
+			"target": "WTK7N16A25004822",
 		},
 		{
 			"name": "Debug iOS",

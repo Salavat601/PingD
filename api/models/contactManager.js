@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import moment from 'moment';
-import { checkPermission } from 'react-native-contacts';
+import {checkPermission} from 'react-native-contacts';
 import Theme from '../../components/Theme';
 
 export const ContactPriority = {
@@ -69,8 +69,8 @@ export const ContactMethods = {
 };
 
 export function sortContacts(contact1, contact2) {
-	if (contact1.lastName === "") return 1;
-	if (contact2.lastName === "") return -1;
+	if (contact1.lastName === '') return 1;
+	if (contact2.lastName === '') return -1;
 	if (contact1.lastName < contact2.lastName) return -1;
 	else if (contact1.lastName > contact2.lastName) return 1;
 	else {
@@ -82,7 +82,7 @@ export function sortContacts(contact1, contact2) {
 }
 
 export class Contact {
-	static fullName = (contact) => {
+	static fullName = contact => {
 		return `${contact.firstName} ${contact.lastName}`.trim();
 	};
 
@@ -107,7 +107,7 @@ export class Contact {
 		return result;
 	};
 
-	static phoneNumberCleaned = (contact) => {
+	static phoneNumberCleaned = contact => {
 		return contact.phoneNumber.replace(/\D/g, '');
 	};
 
