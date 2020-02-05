@@ -11,6 +11,7 @@ import { connect } from 'react-redux';
 
 import AppBar from '../generic/AppBar';
 import PingCard from '../generic/PingCard';
+import { sortContacts } from '../../api/models/contactManager'
 
 
 class PingList extends Component {
@@ -38,7 +39,7 @@ class PingList extends Component {
 	}
 
 	render() {
-		const contacts = this.props.contacts.sort((c1, c2) => this.comparePingCards(c1, c2));
+		const contacts = this.props.contacts.sort((c1, c2) => sortContacts(c1, c2));
 		console.log("Contacts: ", contacts);
 		return (
 			<View>

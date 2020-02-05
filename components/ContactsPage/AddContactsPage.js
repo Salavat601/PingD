@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
 	FlatList,
 	Image,
@@ -8,9 +8,9 @@ import {
 	View,
 	PermissionsAndroid,
 } from 'react-native';
-import {SearchBar} from 'react-native-elements';
+import { SearchBar } from 'react-native-elements';
 import Contacts from 'react-native-contacts';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import * as appActions from '../../api/redux/actions/appActions/changeRoot';
@@ -62,7 +62,7 @@ const buttonStyles = StyleSheet.create({
 		borderColor: Theme.White,
 		shadowColor: Theme.Black,
 		shadowOpacity: 0.16,
-		shadowOffset: {width: 0, height: 3},
+		shadowOffset: { width: 0, height: 3 },
 		shadowRadius: 6,
 	},
 	continueButtonImg: {
@@ -95,8 +95,8 @@ class AddContactsPage extends Component {
 	}
 
 	searchContacts(search) {
-		const {contacts, savedNumbers} = this.state;
-		const searchResult = contacts.filter(function(contact) {
+		const { contacts, savedNumbers } = this.state;
+		const searchResult = contacts.filter(function (contact) {
 			if (savedNumbers.indexOf(contact.phoneNumber) !== -1) {
 				return false;
 			}
@@ -143,10 +143,10 @@ class AddContactsPage extends Component {
 			return;
 		}
 
-		const {savedNumbers} = this.state;
+		const { savedNumbers } = this.state;
 		let contacts = [];
 		for (let i = 0; i < contactInfos.length; i++) {
-			const contact = new Contact({info: contactInfos[i]});
+			const contact = new Contact({ info: contactInfos[i] });
 			if (
 				!contact.firstName.startsWith('#') &&
 				!(contact.firstName === '' && contact.lastName === '')
@@ -155,7 +155,7 @@ class AddContactsPage extends Component {
 			}
 		}
 
-		this.setState({contacts: contacts.sort(sortContacts)});
+		this.setState({ contacts: contacts.sort(sortContacts) });
 		this.searchContacts(this.state.search);
 	}
 
@@ -199,11 +199,11 @@ class AddContactsPage extends Component {
 			}
 
 			let initial =
-				contacts[i].firstName.length > 0
-					? contacts[i].firstName.substring(0, 1)
+				contacts[i].lastName.length > 0
+					? contacts[i].lastName.substring(0, 1)
 					: '';
 			if (initial != lastInitial) {
-				results.push({isSeparator: true, letter: initial});
+				results.push({ isSeparator: true, letter: initial });
 				lastInitial = initial;
 			}
 
@@ -219,14 +219,14 @@ class AddContactsPage extends Component {
 
 	render() {
 		let contactList = null;
-		const {search} = this.state;
+		const { search } = this.state;
 		if (this.state.searchResult.length > 0)
 			contactList = (
 				<FlatList
 					contentContainerStyle={styles.contactList}
 					data={this.addContactSeparators(this.state.searchResult)}
 					keyExtractor={(item, index) => index.toString()}
-					renderItem={({item}) => this.renderContactCard(item)}
+					renderItem={({ item }) => this.renderContactCard(item)}
 				/>
 			);
 
@@ -237,8 +237,8 @@ class AddContactsPage extends Component {
 					<ContinueButton continue={this._startApp} />
 				</AppBar>
 				<SearchBar
-					inputContainerStyle={{backgroundColor: 'white'}}
-					containerStyle={{backgroundColor: 'white'}}
+					inputContainerStyle={{ backgroundColor: 'white' }}
+					containerStyle={{ backgroundColor: 'white' }}
 					placeholder="Type Here..."
 					onChangeText={this.onSearchKeyChanged}
 					value={search}

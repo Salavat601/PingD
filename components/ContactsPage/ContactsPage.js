@@ -1,6 +1,6 @@
-import React, {Component} from 'react';
-import {FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {connect} from 'react-redux';
+import React, { Component } from 'react';
+import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import AppBar from '../generic/AppBar';
@@ -9,10 +9,9 @@ import ContactSeparator from '../generic/ContactSeparator';
 import * as appActions from '../../api/redux/actions/appActions/changeRoot';
 import ContactView from './ContactView';
 import Theme from '../Theme';
-import compareContacts from '../../utils/compareContacts';
-import {Contact} from '../../api/models/contactManager';
+import { Contact, sortContacts } from '../../api/models/contactManager';
 
-function ContactListItem({contact, onSelect}) {
+function ContactListItem({ contact, onSelect }) {
 	if (contact.isSeparator) {
 		return <ContactSeparator letter={contact.letter} />;
 	}
@@ -24,7 +23,7 @@ function ContactListItem({contact, onSelect}) {
 			onPress={() => {
 				onSelect(contact);
 			}}>
-			{ContactCard({style: [styles.card], contact: contact})}
+			{ContactCard({ style: [styles.card], contact: contact })}
 		</TouchableOpacity>
 	);
 }
@@ -45,9 +44,9 @@ class ContactsPage extends Component {
 		for (let i = 0; i < contacts.length; i++) {
 			let contact = contacts[i];
 			let initial =
-				contact.firstName.length > 0 ? contact.firstName.substring(0, 1) : '';
+				contact.lastName.length > 0 ? contact.lastName.substring(0, 1) : '';
 			if (initial != lastInitial) {
-				results.push({isSeparator: true, letter: initial});
+				results.push({ isSeparator: true, letter: initial });
 				lastInitial = initial;
 			}
 
@@ -59,16 +58,16 @@ class ContactsPage extends Component {
 
 	showContact(contact) {
 		if (contact.isSeparator) return;
-		this.setState({viewing: contact.contactId});
+		this.setState({ viewing: contact.contactId });
 	}
 
 	resetContact = () => {
-		this.setState({viewing: null});
+		this.setState({ viewing: null });
 	};
 
 	render() {
 		let contacts = this.props.contacts ? this.props.contacts : [];
-		contacts.sort(compareContacts);
+		contacts.sort(sortContacts);
 
 		let contactView = null;
 		if (this.state.viewing) {
@@ -91,7 +90,7 @@ class ContactsPage extends Component {
 					contentContainerStyle={styles.contactList}
 					data={this.addContactSeparators(contacts)}
 					keyExtractor={(item, index) => index.toString()}
-					renderItem={({item}) => (
+					renderItem={({ item }) => (
 						<ContactListItem
 							contact={item}
 							onSelect={() => {

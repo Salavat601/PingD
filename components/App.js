@@ -1,17 +1,17 @@
-import React, {Component} from 'react'; // eslint-disable-line no-unused-vars
-import {Navigation} from 'react-native-navigation';
+import React, { Component } from 'react'; // eslint-disable-line no-unused-vars
+import { Navigation } from 'react-native-navigation';
 
 import configureStore from '../api/redux/store.js';
 import * as appActions from '../api/redux/actions/appActions/changeRoot';
 
-import {registerScreens} from './screens';
-import {Colors} from 'react-native/Libraries/NewAppScreen';
+import { registerScreens } from './screens';
+import { Colors } from 'react-native/Libraries/NewAppScreen';
 import Theme from '../components/Theme';
-import {isIOS, isAndroid} from '../helpers/platformManager';
-import {Notifications} from 'react-native-notifications';
+import { isIOS, isAndroid } from '../helpers/platformManager';
+import { Notifications } from 'react-native-notifications';
 import detectFirstLaunch from '../utils/detectFirstLaunch';
 
-const {store, persistor} = configureStore();
+const { store, persistor } = configureStore();
 registerScreens(store, persistor);
 
 function setNavigationDefaultOptions() {
@@ -21,7 +21,7 @@ function setNavigationDefaultOptions() {
 			barStyle: 'default',
 			translucent: false,
 		},
-		bottomTab: {selectedTextColor: Theme.Blue},
+		bottomTab: { selectedTextColor: Theme.Blue },
 	});
 }
 
@@ -33,7 +33,7 @@ class App extends Component {
 
 		Notifications.events().registerNotificationReceivedForeground(
 			(notification, completion) => {
-				completion({alert: false, sound: false, badge: false});
+				completion({ alert: false, sound: false, badge: false });
 			},
 		);
 
@@ -61,7 +61,7 @@ class App extends Component {
 	};
 
 	onStoreUpdate() {
-		let {root} = store.getState().app;
+		let { root } = store.getState().app;
 		if (this.currentRoot != root) {
 			this.currentRoot = root;
 			this.startApp(root);
@@ -85,7 +85,7 @@ class App extends Component {
 												icon: require('../assets/contacts_unselected.png'),
 												selectedIcon: require('../assets/contacts_selected.png'),
 											},
-											topBar: {visible: false, animate: false},
+											topBar: { visible: false, animate: false },
 										},
 									},
 								},
@@ -98,7 +98,7 @@ class App extends Component {
 												icon: require('../assets/ping_list_unselected.png'),
 												selectedIcon: require('../assets/ping_list_selected.png'),
 											},
-											topBar: {visible: false, animate: false},
+											topBar: { visible: false, animate: false },
 										},
 									},
 								},
@@ -111,7 +111,7 @@ class App extends Component {
 												icon: require('../assets/calendar_unselected.png'),
 												selectedIcon: require('../assets/calendar_selected.png'),
 											},
-											topBar: {visible: false, animate: false},
+											topBar: { visible: false, animate: false },
 										},
 									},
 								},
@@ -132,9 +132,9 @@ class App extends Component {
 									component: {
 										name: 'PingD.Onboarding',
 										options: {
-											topBar: {visible: false, animate: false},
+											topBar: { visible: false, animate: false },
 										},
-										passProps: {text: 'stack with one child'},
+										passProps: { text: 'stack with one child' },
 									},
 								},
 							],

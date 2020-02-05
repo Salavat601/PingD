@@ -1,10 +1,10 @@
 import React from 'react';
-import {Notifications} from 'react-native-notifications';
-import ContactManager, {Contact} from '../../models/contactManager';
-import {Event} from '../../models/eventManager';
+import { Notifications } from 'react-native-notifications';
+import ContactManager, { Contact } from '../../models/contactManager';
+import { Event } from '../../models/eventManager';
 import moment from 'moment';
 import PushNotification from 'react-native-push-notification';
-import {isIOS, isAndroid} from '../../../helpers/platformManager';
+import { isIOS, isAndroid } from '../../../helpers/platformManager';
 
 function phoneNumber(contact) {
 	if (!contact || !contact.phoneNumber) return '0';
@@ -66,7 +66,7 @@ export function cancel(contact) {
 	if (!contact || !contact.phoneNumber) return;
 
 	var id = notificationId(contact);
-	PushNotification.cancelLocalNotifications({id: id});
+	PushNotification.cancelLocalNotifications({ id: id });
 	return;
 }
 export function update(contact) {
@@ -91,7 +91,7 @@ export function registerEvent(event) {
 		0,
 		0,
 	);
-	console.log('Event Notification Scheduled: ', id);
+	// const day = new Date(Date.now() + 5 * 1000)
 	const id = eventNotificationId(event);
 
 	PushNotification.localNotificationSchedule({
@@ -110,17 +110,19 @@ export function registerEvent(event) {
 		importance: 'high', // (optional) set notification importance, default: high
 
 		// iOS and Android properties
-		title: "Today's Pings", // (optional)
+		title: "Today's Event", // (optional)
 		// number: "none",
 		message: message, // (required)
 		playSound: true, // (optional) default: true
 		soundName: 'default', // (optional) Sound to play when the notification is shown
 		date: day,
 	});
+
+	console.log('Event Notification Scheduled: ', id);
 }
 
 export function cancelEvent(event) {
 	var id = eventNotificationId(event);
-	PushNotification.cancelLocalNotifications({id: id});
+	PushNotification.cancelLocalNotifications({ id: id });
 	return;
 }

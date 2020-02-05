@@ -69,6 +69,8 @@ export const ContactMethods = {
 };
 
 export function sortContacts(contact1, contact2) {
+	if (contact1.lastName === "") return 1;
+	if (contact2.lastName === "") return -1;
 	if (contact1.lastName < contact2.lastName) return -1;
 	else if (contact1.lastName > contact2.lastName) return 1;
 	else {

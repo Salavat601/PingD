@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
 	View,
 	Text,
@@ -11,17 +11,17 @@ import {
 	FlatList,
 	ScrollView,
 } from 'react-native';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import DatePicker from 'react-native-datepicker';
 import RNPickerSelect from 'react-native-picker-select';
 import Swipeable from 'react-native-swipeable-row';
 import AppBar from '../generic/AppBar';
-import {Calendar, CalendarList, Agenda} from 'react-native-calendars';
+import { Calendar, CalendarList, Agenda } from 'react-native-calendars';
 import Theme from '../Theme';
 import Moment from 'react-moment';
 import moment from 'moment';
 import EventTypes from '../../api/models/eventTypes';
-import EventManager, {Event} from '../../api/models/eventManager';
+import EventManager, { Event } from '../../api/models/eventManager';
 import * as EventActions from '../../api/redux/actions/eventActions';
 
 const styles = StyleSheet.create({
@@ -47,10 +47,9 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 		alignItems: 'center',
 		fontSize: 8,
-		color: Theme.Blue,
 		alignSelf: 'center',
 		textAlign: 'center',
-		marginTop: 10,
+		marginTop: 6,
 	},
 
 	calendar: {
@@ -93,7 +92,7 @@ const styles = StyleSheet.create({
 		paddingRight: 10,
 		paddingTop: 5,
 		paddingBottom: 5,
-		shadowOffset: {width: 2, height: 2},
+		shadowOffset: { width: 2, height: 2 },
 		shadowColor: 'black',
 		shadowOpacity: 50,
 	},
@@ -150,7 +149,7 @@ const modalStyles = StyleSheet.create({
 		paddingRight: 10,
 		paddingTop: 5,
 		paddingBottom: 5,
-		shadowOffset: {width: 2, height: 2},
+		shadowOffset: { width: 2, height: 2 },
 		shadowColor: 'black',
 		shadowOpacity: 50,
 		textAlign: 'center',
@@ -175,7 +174,7 @@ const modalStyles = StyleSheet.create({
 		borderColor: Theme.White,
 		shadowColor: Theme.Black,
 		shadowOpacity: 0.16,
-		shadowOffset: {width: 0, height: 3},
+		shadowOffset: { width: 0, height: 3 },
 		shadowRadius: 6,
 	},
 	selectImage: {
@@ -275,10 +274,10 @@ class EventListItem extends Component {
 
 	SwipableRightContent = (
 		<View
-			style={{backgroundColor: '#fd9426', flex: 1, justifyContent: 'center'}}>
-			<View style={{marginLeft: '1%', marginRight: '65%'}}>
+			style={{ backgroundColor: '#fd9426', flex: 1, justifyContent: 'center' }}>
+			<View style={{ marginLeft: '1%', marginRight: '65%' }}>
 				<Text
-					style={{textAlign: 'center', fontWeight: 'bold', color: Theme.White}}>
+					style={{ textAlign: 'center', fontWeight: 'bold', color: Theme.White }}>
 					Delete
 				</Text>
 			</View>
@@ -335,7 +334,7 @@ class CalendarPage extends Component {
 	}
 
 	onEnjoyBtnPressed() {
-		Alert.alert('Welcome to My First App', 'Hello World', [{text: 'OK'}], {
+		Alert.alert('Welcome to My First App', 'Hello World', [{ text: 'OK' }], {
 			cancelable: false,
 		});
 	}
@@ -347,7 +346,7 @@ class CalendarPage extends Component {
 	};
 
 	onNewEventDateSelected = date => {
-		this.setState({newEventDate: moment(date, 'MMMM Do YYYY').toDate()});
+		this.setState({ newEventDate: moment(date, 'MMMM Do YYYY').toDate() });
 	};
 
 	onNewEventDoneBtnClicked() {
@@ -374,9 +373,9 @@ class CalendarPage extends Component {
 		let events = this.props.events ? this.props.events : [];
 		events = EventManager.eventWithDate(events, date);
 		return (
-			<View style={{backgroundColor: Theme.Gray, flexWrap: 'wrap'}}>
-				<Text style={{textAlign: 'center', color: Theme.Gray}}>{date.day}</Text>
-				<View style={{flexDirection: 'row', height: 15}}>
+			<View style={{ backgroundColor: Theme.Gray, flexWrap: 'wrap' }}>
+				<Text style={{ textAlign: 'center', color: Theme.Gray }}>{date.day}</Text>
+				<View style={{ flexDirection: 'row', height: 15 }}>
 					{events.map((item, index) => {
 						<View />;
 					})}
@@ -404,7 +403,7 @@ class CalendarPage extends Component {
 				...result,
 				[strDate]: {
 					dots: colors.map((color, index) => {
-						return {color: color, selectedColor: color};
+						return { color: color, selectedColor: color };
 					}),
 				},
 			};
@@ -434,7 +433,7 @@ class CalendarPage extends Component {
 						source={require('../../assets/logo.png')}
 					/>
 				</AppBar>
-				<View style={{flex: 1}}>
+				<View style={{ flex: 1 }}>
 					<ScrollView>
 						<Text style={styles.description}>
 							{'Add Birthdays/Events/Reminders to your\nSocial Calendar!'}
@@ -448,7 +447,7 @@ class CalendarPage extends Component {
 							}}
 							horizontal={true}
 							pagingEnabled={true}
-							style={{marginTop: 20}}
+							style={{ marginTop: 20 }}
 							onDayPress={this.onCalendarDateSelected}
 							markedDates={
 								// {
@@ -480,7 +479,7 @@ class CalendarPage extends Component {
 							scrollEnabled={!this.state.isSwiping}
 							style={[eventListStyles.list]}
 							data={currentEventList}
-							renderItem={({item}) => {
+							renderItem={({ item }) => {
 								return (
 									<EventListItem
 										event={item}
@@ -508,7 +507,7 @@ class CalendarPage extends Component {
 					transparent
 					animationType="fade"
 					visible={this.state.showNewEventModal}
-					style={{backgroundColor: 'blue'}}>
+					style={{ backgroundColor: 'blue' }}>
 					<View
 						style={{
 							flex: 1,
@@ -524,7 +523,7 @@ class CalendarPage extends Component {
 							}}>
 							<TouchableOpacity
 								onPress={() => {
-									this.setState({showNewEventModal: false});
+									this.setState({ showNewEventModal: false });
 								}}>
 								<Image
 									source={require('../../assets/close.png')}
@@ -539,7 +538,7 @@ class CalendarPage extends Component {
 									placeholderTextColor={Theme.DarkGray}
 									text={this.state.newEventLabel}
 									onChangeText={text => {
-										this.setState({newEventLabel: text});
+										this.setState({ newEventLabel: text });
 									}}
 								/>
 								<Text style={modalStyles.title}>Type:</Text>
@@ -553,7 +552,7 @@ class CalendarPage extends Component {
 										onValueChange={value => {
 											EventTypes.all.map((item, index) => {
 												if (item.title == value) {
-													this.setState({newEventIndex: index});
+													this.setState({ newEventIndex: index });
 												}
 											});
 										}}
@@ -562,19 +561,19 @@ class CalendarPage extends Component {
 										}}
 										value={selectedEvent ? selectedEvent.title : ''}
 										useNativeAndroidPickerStyle={false}
-										textInputProps={{underlineColor: 'yellow'}}
+										textInputProps={{ underlineColor: 'yellow' }}
 									/>
 								</View>
 								<Text style={modalStyles.description}>
 									* Birthday events will be saved to repeat every year:
 								</Text>
 								<Text style={modalStyles.title}>Date:</Text>
-								<View style={{flexDirection: 'row', alignContent: 'stretch'}}>
+								<View style={{ flexDirection: 'row', alignContent: 'stretch' }}>
 									<DatePicker
 										ref={picker => {
 											this.datePicker = picker;
 										}}
-										style={{flex: 1}}
+										style={{ flex: 1 }}
 										date={this.state.newEventDate}
 										mode="date"
 										format="MMMM Do YYYY"
@@ -592,7 +591,7 @@ class CalendarPage extends Component {
 										onDateChange={this.onNewEventDateSelected}
 									/>
 								</View>
-								<View style={{marginTop: 10}}>
+								<View style={{ marginTop: 10 }}>
 									<TouchableOpacity
 										style={modalStyles.buttonContainer}
 										onPress={() => {

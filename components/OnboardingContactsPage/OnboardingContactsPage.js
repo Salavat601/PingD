@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
 	FlatList,
 	Image,
@@ -9,9 +9,9 @@ import {
 	Platform,
 	PermissionsAndroid,
 } from 'react-native';
-import {SearchBar} from 'react-native-elements';
+import { SearchBar } from 'react-native-elements';
 import Contacts from 'react-native-contacts';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import * as appActions from '../../api/redux/actions/appActions/changeRoot';
@@ -63,7 +63,7 @@ const buttonStyles = StyleSheet.create({
 		borderColor: Theme.White,
 		shadowColor: Theme.Black,
 		shadowOpacity: 0.16,
-		shadowOffset: {width: 0, height: 3},
+		shadowOffset: { width: 0, height: 3 },
 		shadowRadius: 6,
 	},
 	continueButtonImg: {
@@ -111,7 +111,7 @@ class OnboardingContactsPage extends Component {
 
 		let contacts = [];
 		for (let i = 0; i < contactInfos.length; i++) {
-			const contact = new Contact({info: contactInfos[i]});
+			const contact = new Contact({ info: contactInfos[i] });
 			if (
 				!contact.firstName.startsWith('#') &&
 				!(contact.firstName === '' && contact.lastName === '')
@@ -120,7 +120,7 @@ class OnboardingContactsPage extends Component {
 			}
 		}
 
-		this.setState({contacts: contacts.sort(sortContacts)});
+		this.setState({ contacts: contacts.sort(sortContacts) });
 		this.searchContacts('');
 	}
 
@@ -160,11 +160,11 @@ class OnboardingContactsPage extends Component {
 
 		for (let i = 0; i < contacts.length; i++) {
 			let initial =
-				contacts[i].firstName.length > 0
-					? contacts[i].firstName.substring(0, 1)
+				contacts[i].lastName.length > 0
+					? contacts[i].lastName.substring(0, 1)
 					: '';
 			if (initial != lastInitial) {
-				results.push({isSeparator: true, letter: initial});
+				results.push({ isSeparator: true, letter: initial });
 				lastInitial = initial;
 			}
 
@@ -183,8 +183,8 @@ class OnboardingContactsPage extends Component {
 	};
 
 	searchContacts(search) {
-		const {contacts} = this.state;
-		const searchResult = contacts.filter(function(contact) {
+		const { contacts } = this.state;
+		const searchResult = contacts.filter(function (contact) {
 			if (!search || search == '') {
 				return true;
 			}
@@ -226,7 +226,7 @@ class OnboardingContactsPage extends Component {
 					contentContainerStyle={styles.contactList}
 					data={this.addContactSeparators(this.state.searchResult)}
 					keyExtractor={(item, index) => index.toString()}
-					renderItem={({item}) => this.renderContactCard(item)}
+					renderItem={({ item }) => this.renderContactCard(item)}
 				/>
 			);
 
@@ -237,8 +237,8 @@ class OnboardingContactsPage extends Component {
 					<ContinueButton continue={this._startApp} />
 				</AppBar>
 				<SearchBar
-					inputContainerStyle={{backgroundColor: 'white'}}
-					containerStyle={{backgroundColor: 'white'}}
+					inputContainerStyle={{ backgroundColor: 'white' }}
+					containerStyle={{ backgroundColor: 'white' }}
 					placeholder="Type Here..."
 					onChangeText={text => {
 						this.onSearchKeyChanged(text);
@@ -278,8 +278,8 @@ const styles = StyleSheet.create({
 	description: {
 		justifyContent: 'center',
 		alignItems: 'center',
+		marginTop: 6,
 		fontSize: 8,
-		color: Theme.Blue,
 		alignSelf: 'center',
 		textAlign: 'center',
 	},
