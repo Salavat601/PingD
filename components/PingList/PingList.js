@@ -1,20 +1,24 @@
-import React, {Component} from 'react';
-import {Image, StyleSheet, Text, View, FlatList} from 'react-native';
+import React, { Component } from 'react';
+import { Image, StyleSheet, Text, View, FlatList } from 'react-native';
 import PropTypes from 'prop-types';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 
 import AppBar from '../generic/AppBar';
 import PingCard from '../generic/PingCard';
-import {sortContacts} from '../../api/models/contactManager';
+import { sortContacts } from '../../api/models/contactManager';
+import moment from 'moment'
 
 class PingList extends Component {
 	constructor(props) {
 		super(props);
+		this.sortContactsByNextContact = this.sortContactsByNextContact.bind(this)
 	}
 
 	sortContactsByNextContact(c1, c2) {
-		if (c1.nextContact < c2.nextContact) return -1;
-		else if (c1.nextContact > c2.nextContact) return 1;
+		const nextContact1 = (typeof c1.nextContact === 'string') ? moment(c1.nextContact).toDate() : c1.nextContact;
+		const nextContact2 = (typeof c2.nextContact === 'string') ? moment(c2.nextContact).toDate() : c2.nextContact;
+		if (nextContact1 < nextContact2) return -1;
+		else if (nextContact1 > nextContact2) return 1;
 		else if (c1.lastName < c2.lastName) return -1;
 		else if (c1.lastName > c2.lastName) return 1;
 		else {
@@ -27,7 +31,7 @@ class PingList extends Component {
 
 	render() {
 		const contacts = this.props.contacts.sort((c1, c2) =>
-			sortContactsByNextContact(c1, c2),
+			this.sortContactsByNextContact(c1, c2),
 		);
 		console.log('Contacts: ', contacts);
 		return (
@@ -45,11 +49,11 @@ class PingList extends Component {
 				{contacts ? (
 					<FlatList
 						data={contacts}
-						renderItem={({item}) => <PingCard contact={item} />}
+						renderItem={({ item }) => <PingCard contact={item} changeDays={() => { this.setState = {} }} />}
 					/>
 				) : (
-					<Text>no</Text>
-				)}
+						<Text>no</Text>
+					)}
 			</View>
 		);
 	}
